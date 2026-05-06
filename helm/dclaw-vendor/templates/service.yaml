@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dclaw-vendor.fullname" . }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 8000
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "dclaw-vendor.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
