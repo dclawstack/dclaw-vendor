@@ -48,5 +48,13 @@
 - **V8.6 (deploy) — Live on Vercel** · PR #57 — Deployed `landing/` as Vercel project `dclaw-vendor` (scope deepro-mallick-s-projects, root dir = `landing/`, framework nextjs via `landing/vercel.json`), aliased to **https://dclaw-vendor.vercel.app** (HTTP 200).
 - **V8.6 (redesign) — Match dclaw-sales/marketing structure** · PR #58 — Rebuilt the landing on the sibling apps' actual stack: **Next 15 + React 19 + Tailwind v4** (`app/` not `src/`, tokens inline in `globals.css` via `@theme`, Poppins + JetBrains Mono). Full multi-section page: sticky NavBar · gradient Hero · logo strip · two feature groups (Foundation + Intelligence) · PO Lifecycle · How-it-works · Analytics · Deploy · gradient CTA · Footer. Hero/nav/CTA **"Launch the app" → the running app** (`NEXT_PUBLIC_APP_URL`, default `http://localhost:3019`). Redeployed; live at https://dclaw-vendor.vercel.app.
 
+## Maintenance — 2026-05-30 (post-v0.x; not Dev Plan tasks)
+
+### 2026-05-30
+
+- **Landing "Launch app" port fallback fix** · PR #67 — `landing/app/page.tsx` `APP_URL` fallback `3019`→`3060` (reconciled hub port); Vercel `dclaw-vendor` redeployed.
+- **Welcome splash + dashboard relocation** · PR #68 — App root (`/`) is now a minimal DKube splash ("Manage vendors with AI" → `/dashboard`); the dashboard moved from `/` to `/dashboard`; `AppShell` renders bare on `/` (no sidebar chrome on the splash) via a `usePathname` guard; sidebar logo + "Dashboard" link repointed to `/dashboard`.
+- **Local Docker refresh (standalone)** — Rebuilt + recreated via `docker-compose.standalone.yml` (bundled per-app Postgres on internal 5432, not host-published, own `vendor_pgdata` volume); new code verified live on :3060.
+
 ## Related
 - [[Home]] · [[Dev Plan]] · [[Roadmap]] · [[Open Issues]]
