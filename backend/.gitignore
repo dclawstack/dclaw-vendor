@@ -39,6 +39,6 @@ venv/
 .coverage
 htmlcov/
 
-# Alembic
-alembic/versions/*.py
-!alembic/versions/.gitkeep
+# Alembic — migration scripts ARE version-controlled (schema source of truth);
+# only ignore compiled caches.
+alembic/versions/__pycache__/

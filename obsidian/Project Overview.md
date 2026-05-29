@@ -21,7 +21,7 @@ Screens: Dashboard · Vendors · Vendor Detail · Purchase Orders · PO Detail (
 
 ## Maturity
 
-Tier 2 (Partial). P0 partially implemented; P1/P2 not started. See [[Roadmap]] and [[Open Issues]].
+Tier 2 (Building). **Phase 0 complete** — scaffold hardened, DPanel-registered, DKube design system + `dk/` primitives in place. **Phase 1 backend complete** — Vendor / PurchaseOrder / POLineItem models, schemas, repositories, CRUD API, alembic migration, and tests (20 passing). Runtime DB tables live in the Neon `vendor` schema (via `schema_translate_map`); local/CI use `public`. Frontend pages (V1.7/V1.8) and the AI Copilot (Phase 2+) next. See [[Build Log]], [[Roadmap]], [[Open Issues]].
 
 ## Related
 
