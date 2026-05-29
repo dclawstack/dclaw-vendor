@@ -560,4 +560,65 @@ export function decideApprovalStep(
   );
 }
 
+// ---------------------------------------------------------------------------
+// Performance (Phase 5)
+// ---------------------------------------------------------------------------
+
+export interface PerformanceScore {
+  id: string;
+  vendor_id: string;
+  period: string;
+  quality_score: number;
+  delivery_score: number;
+  cost_score: number;
+  compliance_score: number;
+  overall_score: number;
+  kpis: Record<string, number>;
+  summary: string | null;
+  created_at: string;
+}
+
+export interface TrendPoint {
+  period: string;
+  overall_score: number;
+  created_at: string;
+}
+
+export interface BenchmarkResult {
+  vendor_id: string;
+  vendor_overall: number | null;
+  peer_group: string;
+  peer_count: number;
+  peer_average: number | null;
+  percentile: number | null;
+}
+
+export function scoreVendorPerformance(vendorId: string, period?: string) {
+  return fetchJson<PerformanceScore>(
+    `/api/v1/performance/vendors/${vendorId}/score`,
+    { method: "POST", body: JSON.stringify({ period: period ?? null }) },
+  );
+}
+
+export async function getLatestScore(vendorId: string): Promise<PerformanceScore | null> {
+  try {
+    return await fetchJson<PerformanceScore>(
+      `/api/v1/performance/vendors/${vendorId}/latest`,
+    );
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null;
+    throw e;
+  }
+}
+
+export function getScoreTrend(vendorId: string) {
+  return fetchJson<TrendPoint[]>(`/api/v1/performance/vendors/${vendorId}/trend`);
+}
+
+export function getBenchmark(vendorId: string) {
+  return fetchJson<BenchmarkResult>(
+    `/api/v1/performance/vendors/${vendorId}/benchmark`,
+  );
+}
+
 export { ApiError };

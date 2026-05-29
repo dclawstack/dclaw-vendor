@@ -8,6 +8,7 @@ from app.api.routes import health
 from app.api.v1 import (
     copilot,
     onboarding,
+    performance,
     po_line_items,
     purchase_orders,
     settings as settings_routes,
@@ -46,3 +47,4 @@ app.include_router(
 app.include_router(settings_routes.router, prefix="/api/v1/settings", tags=["settings"])
 app.include_router(copilot.router, prefix="/api/v1/copilot", tags=["copilot"])
 app.include_router(onboarding.router, prefix="/api/v1/onboarding", tags=["onboarding"])
+app.include_router(performance.router, prefix="/api/v1/performance", tags=["performance"])
