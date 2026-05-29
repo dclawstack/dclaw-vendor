@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, Globe, Pencil, Plus, Sparkles, Tags, Trash2 } from "lucide-react";
 
 import {
   DkBadge,
@@ -26,8 +26,10 @@ import {
   DkTableRow,
 } from "@/components/dk";
 import {
+  classifyVendor,
   createPurchaseOrder,
   deleteVendor,
+  enrichVendor,
   evaluateVendor,
   getVendor,
   listPurchaseOrders,
@@ -41,6 +43,7 @@ import {
   currency,
   formatDate,
   poStatusTone,
+  tierTone,
   VENDOR_STATUSES,
   vendorStatusTone,
 } from "@/lib/format";
@@ -63,6 +66,9 @@ export default function VendorDetailPage() {
   const [evaluating, setEvaluating] = useState(false);
   const [evaluation, setEvaluation] = useState<VendorEvaluation | null>(null);
   const [evalError, setEvalError] = useState<string | null>(null);
+
+  const [classifying, setClassifying] = useState(false);
+  const [enriching, setEnriching] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -128,6 +134,26 @@ export default function VendorDetailPage() {
     }
   }
 
+  async function runClassify() {
+    setClassifying(true);
+    try {
+      await classifyVendor(id);
+      await load();
+    } finally {
+      setClassifying(false);
+    }
+  }
+
+  async function runEnrich() {
+    setEnriching(true);
+    try {
+      await enrichVendor(id);
+      await load();
+    } finally {
+      setEnriching(false);
+    }
+  }
+
   const riskTone = { low: "success", medium: "warning", high: "danger" } as const;
 
   if (loading) return <p className="text-sm text-[var(--dk-fg-2)]">Loading…</p>;
@@ -158,6 +184,12 @@ export default function VendorDetailPage() {
             <DkButton variant="secondary" onClick={runEvaluate} loading={evaluating}>
               <Sparkles className="h-4 w-4" /> Evaluate (AI)
             </DkButton>
+            <DkButton variant="secondary" onClick={runClassify} loading={classifying}>
+              <Tags className="h-4 w-4" /> Classify
+            </DkButton>
+            <DkButton variant="secondary" onClick={runEnrich} loading={enriching}>
+              <Globe className="h-4 w-4" /> Enrich
+            </DkButton>
             <DkButton
               variant="secondary"
               onClick={() => {
@@ -179,6 +211,29 @@ export default function VendorDetailPage() {
           <Field label="Status">
             <DkBadge tone={vendorStatusTone[vendor.status]}>{vendor.status}</DkBadge>
           </Field>
+          <Field label="Tier">
+            {vendor.tier ? (
+              <DkBadge tone={tierTone[vendor.tier]}>{vendor.tier}</DkBadge>
+            ) : (
+              "—"
+            )}
+          </Field>
+          <Field label="Category">{vendor.category || "—"}</Field>
+          <Field label="Industry">{vendor.industry || "—"}</Field>
+          <Field label="Website">
+            {vendor.website ? (
+              <a
+                href={vendor.website.startsWith("http") ? vendor.website : `https://${vendor.website}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-brand hover:underline"
+              >
+                {vendor.website}
+              </a>
+            ) : (
+              "—"
+            )}
+          </Field>
           <Field label="Contact">{vendor.contact_name || "—"}</Field>
           <Field label="Phone">{vendor.phone || "—"}</Field>
           <Field label="Payment terms">{vendor.payment_terms || "—"}</Field>
@@ -186,6 +241,33 @@ export default function VendorDetailPage() {
           <Field label="Added">{formatDate(vendor.created_at)}</Field>
         </DkCardContent>
       </DkCard>
+
+      {vendor.enrichment && (
+        <DkCard>
+          <DkCardContent className="flex flex-col gap-3 py-5">
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-brand" />
+              <span className="font-display font-semibold text-ink">Enriched profile</span>
+              <DkBadge tone={vendor.enrichment.source === "web" ? "info" : "neutral"}>
+                {vendor.enrichment.source === "web" ? "from web" : "AI inferred"}
+              </DkBadge>
+            </div>
+            {vendor.enrichment.description && (
+              <p className="text-sm text-ink">{vendor.enrichment.description}</p>
+            )}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3 md:grid-cols-3">
+              <Field label="Company size">{vendor.enrichment.company_size || "—"}</Field>
+              <Field label="Founded">{vendor.enrichment.founded_year ?? "—"}</Field>
+              <Field label="Headquarters">{vendor.enrichment.headquarters || "—"}</Field>
+            </div>
+            {vendor.enrichment.fetched_url && (
+              <p className="text-xs text-[var(--dk-fg-muted)]">
+                Source: {vendor.enrichment.fetched_url}
+              </p>
+            )}
+          </DkCardContent>
+        </DkCard>
+      )}
 
       {evalError && (
         <p className="text-sm text-[var(--dk-danger)]">AI evaluation: {evalError}</p>

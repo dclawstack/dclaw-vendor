@@ -3,23 +3,17 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_llm
 from app.core.database import get_db
 from app.repositories.vendor_repo import VendorRepository
 from app.schemas.copilot import ChatRequest, CopilotReply
 from app.schemas.evaluation import BatchEvaluationResponse, VendorEvaluationResult
-from app.services import settings_service
 from app.services.copilot_chat import run_chat
 from app.services.llm import LLMError, LLMService
 from app.services.retrieval import build_copilot_context
 from app.services.vendor_evaluation import evaluate_batch, evaluate_vendor
 
 router = APIRouter()
-
-
-async def get_llm(db: AsyncSession = Depends(get_db)) -> LLMService:
-    """Resolve the configured LLM provider into a service instance."""
-    row = await settings_service.get_settings_row(db)
-    return LLMService(settings_service.to_config(row))
 
 
 @router.post("/chat", response_model=CopilotReply)
