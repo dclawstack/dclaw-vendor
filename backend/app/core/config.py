@@ -31,6 +31,20 @@ class Settings(BaseSettings):
     openrouter_model: str = "moonshotai/kimi-k2"
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
 
+    # ----- Document storage (V4.2) --------------------------------------
+    # backend: "local" (filesystem, default — dev/CI) or "minio" (S3-compatible
+    # object store). MinIO is wired but only activates when STORAGE_BACKEND=minio
+    # and the connection vars below are set; drop in real creds to go live.
+    storage_backend: str = "local"
+    storage_dir: str = "/tmp/dclaw_vendor_uploads"
+    minio_endpoint: str = "localhost:9000"
+    minio_access_key: str = ""
+    minio_secret_key: str = ""
+    minio_bucket: str = "vendor-docs"
+    minio_secure: bool = False
+    # Base URL the app is reachable at, used to build local download links.
+    public_base_url: str = "http://localhost:8146"
+
     class Config:
         env_file = ".env"
         case_sensitive = False
