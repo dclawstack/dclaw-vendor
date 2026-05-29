@@ -9,7 +9,7 @@
 | 1 | Missing `dclaw-manifest.json` | ✅ Created in V0.2 (`frontend/public/dclaw-manifest.json`). |
 | 2 | Partial implementation | ✅ Core domain (Phase 1) + AI Copilot (Phase 2) shipped; backend services + all 5 frontend screens in place. |
 | 3 | README was the un-customized scaffold | ✅ Rewritten for DClaw Vendor in V0.3. |
-| 4 | Ports TBD / conflicting | ✅ Resolved in V0.1 → canonical 8106 / 3019 / `dclaw_vendor`. |
+| 4 | Ports TBD / conflicting | ✅ Resolved in V0.1 → canonical 8146 / 3060 / `dclaw_vendor`. |
 | 5 | PRODUCT-SPEC vs PRD scope (no model for richer features) | 🟡 Partially open — domain models for risk scoring, contracts, spend, etc. arrive with Phases 3–8. |
 
 ## Known follow-ups (tracked, not blocking)

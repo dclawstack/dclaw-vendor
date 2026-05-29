@@ -1,36 +1,22 @@
 version: "3.9"
 
+# Postgres is NOT defined here — all DClaw apps share the one local Postgres in
+# ../dclaw-local-db (started by ../dclaw-up.sh). This app uses database
+# dclaw_vendor on that shared server, reached over the external "dclaw-net" network.
 services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: dclaw_vendor
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d dclaw_vendor"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/dclaw_vendor
+      DATABASE_URL: postgresql+asyncpg://dclaw:dclaw@dclaw-postgres:5432/dclaw_vendor
       APP_ENV: production
     ports:
-      - "8106:8106"
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - "8146:8146"
+    networks:
+      - dclaw-net
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8106/health/')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8146/health/')"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -40,18 +26,21 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:8106
+        NEXT_PUBLIC_API_URL: http://localhost:8146
     environment:
-      PORT: 3019
+      PORT: 3060
     ports:
-      - "3019:3019"
+      - "3060:3060"
+    networks:
+      - dclaw-net
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3019/"]
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3060/"]
       interval: 30s
       timeout: 5s
       retries: 3
 
-volumes:
-  postgres_data:
+networks:
+  dclaw-net:
+    external: true

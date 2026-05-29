@@ -39,8 +39,8 @@ See [`PRODUCT-SPEC.md`](PRODUCT-SPEC.md) for the entity/API contract and
 
 | Setting | Value |
 |---------|-------|
-| Backend port | `8106` |
-| Frontend port | `3019` |
+| Backend port | `8146` |
+| Frontend port | `3060` |
 | Database | `dclaw_vendor` |
 | API base path | `/api/v1` |
 
@@ -50,23 +50,23 @@ architecture lock and anti-patterns — **read it before making code changes.**
 ## Run locally
 
 ```bash
-# Backend (FastAPI on :8106)
+# Backend (FastAPI on :8146)
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.api.main:app --reload --port 8106
-# Health: http://localhost:8106/health/  ->  {"status":"ok"}
+uvicorn app.api.main:app --reload --port 8146
+# Health: http://localhost:8146/health/  ->  {"status":"ok"}
 
-# Frontend (Next.js on :3019)
+# Frontend (Next.js on :3060)
 cd frontend
 npm install
-NEXT_PUBLIC_API_URL=http://localhost:8106 npm run dev
+NEXT_PUBLIC_API_URL=http://localhost:8146 npm run dev
 ```
 
 Or with Docker:
 
 ```bash
-docker compose up -d   # postgres + backend(:8106) + frontend(:3019)
+docker compose up -d   # postgres + backend(:8146) + frontend(:3060)
 ```
 
 ## Tests
