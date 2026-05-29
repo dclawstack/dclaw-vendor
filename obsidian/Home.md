@@ -11,6 +11,7 @@
 - [[Architecture]] — stack, ports, directory layout, anti-patterns
 - [[Roadmap]] — P0 → P1 → P2 feature plan
 - [[Dev Plan]] — phase-wise build plan (mirrored to Neon + GitHub Project)
+- [[Build Log]] — chronological record of completed tasks (PRs / issues / outcomes)
 - [[Open Issues]] — known gaps
 - [[Glossary]] — terms and acronyms
 
