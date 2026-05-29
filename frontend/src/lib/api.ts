@@ -249,4 +249,41 @@ export function deleteLineItem(id: string) {
   return fetchVoid(`/api/v1/po-line-items/${id}`, { method: "DELETE" });
 }
 
+// ---------------------------------------------------------------------------
+// Settings — LLM provider config
+// ---------------------------------------------------------------------------
+
+export type LLMProvider = "ollama" | "openrouter" | "auto";
+
+export interface LLMSettings {
+  llm_provider: LLMProvider;
+  ollama_base_url: string;
+  ollama_model: string;
+  openrouter_model: string;
+  openrouter_base_url: string;
+  openrouter_api_key_set: boolean;
+  openrouter_api_key_preview: string;
+  updated_at: string;
+}
+
+export interface LLMSettingsUpdate {
+  llm_provider?: LLMProvider;
+  ollama_base_url?: string;
+  ollama_model?: string;
+  openrouter_api_key?: string;
+  openrouter_model?: string;
+  openrouter_base_url?: string;
+}
+
+export function getLLMSettings() {
+  return fetchJson<LLMSettings>("/api/v1/settings/llm");
+}
+
+export function updateLLMSettings(body: LLMSettingsUpdate) {
+  return fetchJson<LLMSettings>("/api/v1/settings/llm", {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
 export { ApiError };
