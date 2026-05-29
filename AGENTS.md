@@ -7,8 +7,8 @@
 
 **DClaw Vendor** is a vertical SaaS application built on the DClaw Stack.
 
-- **Backend Port:** `8058` (FastAPI)
-- **Frontend Port:** `3058` (Next.js)
+- **Backend Port:** `8106` (FastAPI)
+- **Frontend Port:** `3019` (Next.js)
 - **Database:** `dclaw_vendor` (PostgreSQL)
 - **Base API Path:** `/api/v1`
 

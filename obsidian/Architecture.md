@@ -14,14 +14,16 @@
 | LLM | Ollama (local) · OpenRouter + Kimi K2.5 (cloud fallback) |
 | Container | Docker Compose (dev) · Helm chart (prod) |
 
-## Ports
+## Ports (resolved — V0.1)
 
-| Source | Frontend | Backend |
-|--------|----------|---------|
-| `REVISED-PRD.md` (TBD) | 3032 | 18102 |
-| `dclaw-seo` AGENTS port registry | 3019 | 8106 |
+| Frontend | Backend | DB |
+|----------|---------|-----|
+| 3019 | 8106 | `dclaw_vendor` |
 
-> The PRD ports are placeholders; the shared registry (in dclaw-seo's AGENTS.md) lists `dclaw-vendor` at `8106 / 3019`. Assign canonically before build. DB name `dclaw_vendor`.
+> **Canonical (locked V0.1):** `8106` backend / `3019` frontend / DB `dclaw_vendor`, base path `/api/v1`.
+> Reconciled from the shared DClaw port registry (AGENTS.md). The stale `REVISED-PRD.md` ports
+> (3032 / 18102) are placeholders and are superseded by these. `docker-compose.yml`, both
+> Dockerfiles, `.env.example`, and AGENTS.md all agree on `8106 / 3019`.
 
 ## API surface (PRODUCT-SPEC)
 
