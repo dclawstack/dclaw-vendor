@@ -1,16 +1,31 @@
 # DClaw Vendor — Landing
 
-Standalone marketing landing page for DClaw Vendor, built with Next.js 14 and the
-DKube design system (`--dk-*` tokens, Poppins, light-mode).
+Standalone marketing landing page for DClaw Vendor. Built with **Next.js 15 + React 19
++ Tailwind CSS v4** and the DKube brand (purple `--dk-*` tokens, Poppins), mirroring the
+dclaw-sales / dclaw-marketing landing apps.
+
+Single page: NavBar · Hero · Logo strip · Features · Lifecycle · How it works ·
+Analytics · Deploy · CTA · Footer.
 
 ## Run
 
 ```bash
 npm install
-NEXT_PUBLIC_APP_URL=http://localhost:3019 npm run dev   # serves on :3119
+npm run dev        # http://localhost:3000
 ```
 
-`NEXT_PUBLIC_APP_URL` points the hero/CTA buttons at the running app frontend
-(dev default `http://localhost:3019`).
+The hero / nav / CTA "Launch the app" buttons point at `NEXT_PUBLIC_APP_URL`
+(defaults to the running app at `http://localhost:3019`):
 
-> **Vercel deploy is deferred** — this app is not yet wired to a hosting provider.
+```bash
+NEXT_PUBLIC_APP_URL=http://localhost:3019 npm run build
+```
+
+## Deploy
+
+Live at **https://dclaw-vendor.vercel.app** (Vercel project `dclaw-vendor`, root dir
+`landing/`). Redeploy from this directory:
+
+```bash
+vercel deploy --prod --yes --scope deepro-mallick-s-projects
+```
