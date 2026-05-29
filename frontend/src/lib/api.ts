@@ -296,4 +296,47 @@ export function testLLMConnection() {
   return fetchJson<LLMTestResult>("/api/v1/settings/llm/test", { method: "POST" });
 }
 
+// ---------------------------------------------------------------------------
+// Copilot
+// ---------------------------------------------------------------------------
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface CopilotReply {
+  reply: string;
+  suggested_actions: string[];
+}
+
+export function chatCopilot(messages: ChatMessage[], vendorId?: string) {
+  return fetchJson<CopilotReply>("/api/v1/copilot/chat", {
+    method: "POST",
+    body: JSON.stringify({ messages, vendor_id: vendorId ?? null }),
+  });
+}
+
+export interface VendorEvaluation {
+  risk_level: "low" | "medium" | "high";
+  risk_flags: string[];
+  performance_outlook: string;
+  summary: string;
+  recommendation: "approve" | "monitor" | "review" | "avoid";
+}
+
+export interface VendorEvaluationResult {
+  vendor_id: string;
+  vendor_name: string;
+  evaluation: VendorEvaluation | null;
+  error: string | null;
+}
+
+export function evaluateVendor(vendorId: string) {
+  return fetchJson<VendorEvaluationResult>(
+    `/api/v1/copilot/vendors/${vendorId}/evaluate`,
+    { method: "POST" },
+  );
+}
+
 export { ApiError };

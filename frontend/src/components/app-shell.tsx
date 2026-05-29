@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { DkSidebar } from "@/components/dk";
+import { CopilotWidget } from "@/components/copilot-widget";
 
 const groups = [
   {
@@ -47,6 +48,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="flex-1 overflow-x-hidden bg-[var(--dk-bg)]">
         <div className="mx-auto max-w-6xl px-8 py-10">{children}</div>
       </main>
+      <CopilotWidget />
     </div>
   );
 }
