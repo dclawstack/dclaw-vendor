@@ -8,3 +8,8 @@
 # Environment
 .env
 .env.local
+
+# Obsidian (vault config noise; curated notes ARE tracked)
+.obsidian/workspace*.json
+.obsidian/cache
+obsidian/scratch/
