@@ -39,7 +39,8 @@
 ### 2026-05-29
 
 - **V8.6 — Landing site** · PR #55 · issue #48 — Standalone `landing/` Next.js 14 app (own `package.json`, dev port 3119) with the DKube brand (`--dk-*` tokens, Poppins, light-mode, pill CTAs, Lucide). Lean single page: Hero (eyebrow + headline + lede + CTA) · Features (5 cards) · FinalCTA · Footer (© One Convergence · DKube tagline). Hero/CTA → app frontend via `NEXT_PUBLIC_APP_URL`. `next build` green.
-- **V8.6 (deploy) — Live on Vercel** · PR #57 — Deployed `landing/` as Vercel project `dclaw-vendor` (scope deepro-mallick-s-projects, root dir = `landing/`, framework nextjs via `landing/vercel.json`), aliased to **https://dclaw-vendor.vercel.app** (HTTP 200). Mirrors dclaw-sales/dclaw-marketing. CTA `NEXT_PUBLIC_APP_URL` interim-points at the GitHub repo until the app frontend is hosted.
+- **V8.6 (deploy) — Live on Vercel** · PR #57 — Deployed `landing/` as Vercel project `dclaw-vendor` (scope deepro-mallick-s-projects, root dir = `landing/`, framework nextjs via `landing/vercel.json`), aliased to **https://dclaw-vendor.vercel.app** (HTTP 200).
+- **V8.6 (redesign) — Match dclaw-sales/marketing structure** · PR #58 — Rebuilt the landing on the sibling apps' actual stack: **Next 15 + React 19 + Tailwind v4** (`app/` not `src/`, tokens inline in `globals.css` via `@theme`, Poppins + JetBrains Mono). Full multi-section page: sticky NavBar · gradient Hero · logo strip · two feature groups (Foundation + Intelligence) · PO Lifecycle · How-it-works · Analytics · Deploy · gradient CTA · Footer. Hero/nav/CTA **"Launch the app" → the running app** (`NEXT_PUBLIC_APP_URL`, default `http://localhost:3019`). Redeployed; live at https://dclaw-vendor.vercel.app.
 
 ## Related
 - [[Home]] · [[Dev Plan]] · [[Roadmap]] · [[Open Issues]]
