@@ -913,4 +913,151 @@ export const DIVERSITY_CATEGORIES = [
   "small_business",
 ];
 
+// ---------------------------------------------------------------------------
+// Surveys & Feedback (Phase 7, V7.3)
+// ---------------------------------------------------------------------------
+
+export interface SurveyResponse {
+  id: string;
+  survey_id: string;
+  respondent: string | null;
+  rating: number;
+  comment: string | null;
+  sentiment: "positive" | "neutral" | "negative" | null;
+  sentiment_score: number | null;
+  created_at: string;
+}
+
+export interface Survey {
+  id: string;
+  vendor_id: string;
+  title: string;
+  created_at: string;
+  responses: SurveyResponse[];
+}
+
+export interface VendorSentiment {
+  vendor_id: string;
+  response_count: number;
+  average_rating: number | null;
+  average_sentiment: number | null;
+  positive: number;
+  neutral: number;
+  negative: number;
+  trend: { period: string; average_rating: number; average_sentiment: number | null; count: number }[];
+}
+
+export function listSurveys(params: { vendor_id?: string } = {}) {
+  return fetchJson<Paginated<Survey>>(`/api/v1/surveys${qs(params)}`);
+}
+
+export function getSurvey(id: string) {
+  return fetchJson<Survey>(`/api/v1/surveys/${id}`);
+}
+
+export function createSurvey(body: { vendor_id: string; title: string }) {
+  return fetchJson<Survey>("/api/v1/surveys", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteSurvey(id: string) {
+  return fetchVoid(`/api/v1/surveys/${id}`, { method: "DELETE" });
+}
+
+export function addSurveyResponse(
+  surveyId: string,
+  body: { respondent?: string; rating: number; comment?: string },
+) {
+  return fetchJson<SurveyResponse>(`/api/v1/surveys/${surveyId}/responses`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function getVendorSentiment(vendorId: string) {
+  return fetchJson<VendorSentiment>(`/api/v1/surveys/vendors/${vendorId}/sentiment`);
+}
+
+// ---------------------------------------------------------------------------
+// Audits & Compliance (Phase 7, V7.4)
+// ---------------------------------------------------------------------------
+
+export type AuditStatus = "scheduled" | "in_progress" | "completed" | "closed";
+export type FindingSeverity = "low" | "medium" | "high" | "critical";
+export type FindingStatus = "open" | "remediating" | "closed";
+
+export interface AuditFinding {
+  id: string;
+  audit_id: string;
+  description: string;
+  severity: FindingSeverity;
+  status: FindingStatus;
+  remediation: string | null;
+  closed_at: string | null;
+  created_at: string;
+}
+
+export interface Audit {
+  id: string;
+  vendor_id: string;
+  title: string;
+  status: AuditStatus;
+  scheduled_date: string | null;
+  auditor: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  findings: AuditFinding[];
+}
+
+export function listAudits(params: { vendor_id?: string; status?: AuditStatus | "" } = {}) {
+  return fetchJson<Paginated<Audit>>(`/api/v1/audits${qs(params)}`);
+}
+
+export function getAudit(id: string) {
+  return fetchJson<Audit>(`/api/v1/audits/${id}`);
+}
+
+export function createAudit(body: {
+  vendor_id: string;
+  title: string;
+  scheduled_date?: string | null;
+  auditor?: string | null;
+}) {
+  return fetchJson<Audit>("/api/v1/audits", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteAudit(id: string) {
+  return fetchVoid(`/api/v1/audits/${id}`, { method: "DELETE" });
+}
+
+export function closeAudit(id: string) {
+  return fetchJson<Audit>(`/api/v1/audits/${id}/close`, { method: "POST" });
+}
+
+export function addAuditFinding(
+  auditId: string,
+  body: { description: string; severity?: FindingSeverity; remediation?: string },
+) {
+  return fetchJson<AuditFinding>(`/api/v1/audits/${auditId}/findings`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function updateAuditFinding(
+  findingId: string,
+  body: { status?: FindingStatus; remediation?: string; severity?: FindingSeverity },
+) {
+  return fetchJson<AuditFinding>(`/api/v1/audits/findings/${findingId}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
 export { ApiError };

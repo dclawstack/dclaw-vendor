@@ -7,6 +7,7 @@ from app.core.database import init_db
 from app.api.routes import health
 from app.api.v1 import (
     analytics,
+    audits,
     contracts,
     copilot,
     diversity,
@@ -17,6 +18,7 @@ from app.api.v1 import (
     purchase_orders,
     risk,
     settings as settings_routes,
+    surveys,
     sustainability,
     vendors,
 )
@@ -60,3 +62,5 @@ app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytic
 app.include_router(integration.router, prefix="/api/v1/integration", tags=["integration"])
 app.include_router(sustainability.router, prefix="/api/v1/sustainability", tags=["sustainability"])
 app.include_router(diversity.router, prefix="/api/v1/diversity", tags=["diversity"])
+app.include_router(surveys.router, prefix="/api/v1/surveys", tags=["surveys"])
+app.include_router(audits.router, prefix="/api/v1/audits", tags=["audits"])

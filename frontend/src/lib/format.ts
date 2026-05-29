@@ -1,7 +1,10 @@
 import type {
   ApprovalStatus,
+  AuditStatus,
   ContractStatus,
   DocumentStatus,
+  FindingSeverity,
+  FindingStatus,
   OnboardingStatus,
   POStatus,
   RiskLevel,
@@ -90,6 +93,32 @@ export const contractStatusTone: Record<ContractStatus, Tone> = {
   expiring: "warning",
   expired: "danger",
   terminated: "neutral",
+};
+
+export const auditStatusTone: Record<AuditStatus, Tone> = {
+  scheduled: "neutral",
+  in_progress: "info",
+  completed: "warning",
+  closed: "success",
+};
+
+export const findingSeverityTone: Record<FindingSeverity, Tone> = {
+  low: "neutral",
+  medium: "info",
+  high: "warning",
+  critical: "danger",
+};
+
+export const findingStatusTone: Record<FindingStatus, Tone> = {
+  open: "danger",
+  remediating: "warning",
+  closed: "success",
+};
+
+export const sentimentTone: Record<"positive" | "neutral" | "negative", Tone> = {
+  positive: "success",
+  neutral: "neutral",
+  negative: "danger",
 };
 
 export const VENDOR_STATUSES: VendorStatus[] = ["active", "inactive", "blacklisted"];

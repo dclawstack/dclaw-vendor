@@ -8,7 +8,9 @@ import {
   ClipboardCheck,
   FileText,
   LayoutDashboard,
+  MessageSquare,
   Settings,
+  ShieldCheck,
 } from "lucide-react";
 
 import { DkSidebar } from "@/components/dk";
@@ -33,6 +35,16 @@ const groups = [
         label: "Analytics",
         href: "/analytics",
         icon: <BarChart3 className="h-4 w-4" />,
+      },
+      {
+        label: "Feedback",
+        href: "/feedback",
+        icon: <MessageSquare className="h-4 w-4" />,
+      },
+      {
+        label: "Audits",
+        href: "/audits",
+        icon: <ShieldCheck className="h-4 w-4" />,
       },
     ],
   },
