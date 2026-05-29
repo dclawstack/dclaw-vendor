@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Building2,
+  ClipboardCheck,
   FileText,
   LayoutDashboard,
   Settings,
@@ -21,6 +22,11 @@ const groups = [
         label: "Purchase Orders",
         href: "/purchase-orders",
         icon: <FileText className="h-4 w-4" />,
+      },
+      {
+        label: "Onboarding",
+        href: "/onboarding",
+        icon: <ClipboardCheck className="h-4 w-4" />,
       },
     ],
   },

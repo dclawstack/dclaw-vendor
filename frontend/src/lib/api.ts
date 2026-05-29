@@ -426,4 +426,138 @@ export function evaluateVendor(vendorId: string) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Onboarding (Phase 4)
+// ---------------------------------------------------------------------------
+
+export type OnboardingStatus =
+  | "draft"
+  | "collecting"
+  | "pending_approval"
+  | "approved"
+  | "rejected"
+  | "activated";
+export type ApprovalStatus = "pending" | "approved" | "rejected";
+export type DocumentStatus = "uploaded" | "validated" | "rejected";
+
+export interface ChecklistItem {
+  item: string;
+  doc_type: string;
+  required: boolean;
+}
+
+export interface ApprovalStep {
+  id: string;
+  step_order: number;
+  name: string;
+  approver_role: string | null;
+  status: ApprovalStatus;
+  decided_by: string | null;
+  decided_at: string | null;
+  comment: string | null;
+}
+
+export interface OnboardingDocument {
+  id: string;
+  doc_type: string;
+  filename: string;
+  content_type: string | null;
+  size: number | null;
+  status: DocumentStatus;
+  validation: {
+    valid: boolean;
+    doc_type_detected: string;
+    issues: string[];
+  } | null;
+  uploaded_at: string;
+}
+
+export interface OnboardingCase {
+  id: string;
+  vendor_id: string;
+  status: OnboardingStatus;
+  checklist: ChecklistItem[] | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  documents: OnboardingDocument[];
+  steps: ApprovalStep[];
+}
+
+export function listOnboardingCases(
+  params: { vendor_id?: string; status?: OnboardingStatus | ""; limit?: number } = {},
+) {
+  return fetchJson<Paginated<OnboardingCase>>(`/api/v1/onboarding/cases${qs(params)}`);
+}
+
+export function getOnboardingCase(id: string) {
+  return fetchJson<OnboardingCase>(`/api/v1/onboarding/cases/${id}`);
+}
+
+export function createOnboardingCase(body: {
+  vendor_id: string;
+  notes?: string | null;
+  steps?: { name: string; approver_role?: string | null }[];
+}) {
+  return fetchJson<OnboardingCase>("/api/v1/onboarding/cases", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteOnboardingCase(id: string) {
+  return fetchVoid(`/api/v1/onboarding/cases/${id}`, { method: "DELETE" });
+}
+
+export function generateChecklist(id: string) {
+  return fetchJson<OnboardingCase>(`/api/v1/onboarding/cases/${id}/checklist`, {
+    method: "POST",
+  });
+}
+
+export function submitOnboardingCase(id: string) {
+  return fetchJson<OnboardingCase>(`/api/v1/onboarding/cases/${id}/submit`, {
+    method: "POST",
+  });
+}
+
+export function activateOnboardingCase(id: string) {
+  return fetchJson<OnboardingCase>(`/api/v1/onboarding/cases/${id}/activate`, {
+    method: "POST",
+  });
+}
+
+export async function uploadOnboardingDocument(
+  caseId: string,
+  docType: string,
+  file: File,
+): Promise<OnboardingDocument> {
+  const fd = new FormData();
+  fd.append("doc_type", docType);
+  fd.append("file", file);
+  const res = await fetch(`${API_BASE}/api/v1/onboarding/cases/${caseId}/documents`, {
+    method: "POST",
+    body: fd, // no Content-Type — browser sets the multipart boundary
+  });
+  if (!res.ok) throw new ApiError(`API error ${res.status}`, res.status);
+  return res.json();
+}
+
+export function validateDocument(docId: string) {
+  return fetchJson<OnboardingDocument>(
+    `/api/v1/onboarding/documents/${docId}/validate`,
+    { method: "POST" },
+  );
+}
+
+export function decideApprovalStep(
+  stepId: string,
+  body: { decision: "approve" | "reject"; decided_by?: string; comment?: string },
+) {
+  return fetchJson<OnboardingCase>(
+    `/api/v1/onboarding/steps/${stepId}/decision`,
+    { method: "POST", body: JSON.stringify(body) },
+  );
+}
+
 export { ApiError };

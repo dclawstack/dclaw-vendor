@@ -1,4 +1,11 @@
-import type { POStatus, VendorStatus, VendorTier } from "@/lib/api";
+import type {
+  ApprovalStatus,
+  DocumentStatus,
+  OnboardingStatus,
+  POStatus,
+  VendorStatus,
+  VendorTier,
+} from "@/lib/api";
 
 type Tone = "brand" | "neutral" | "success" | "warning" | "danger" | "info" | "outline";
 
@@ -47,6 +54,27 @@ export const VENDOR_TIERS: VendorTier[] = [
   "approved",
   "transactional",
 ];
+
+export const onboardingStatusTone: Record<OnboardingStatus, Tone> = {
+  draft: "neutral",
+  collecting: "info",
+  pending_approval: "warning",
+  approved: "success",
+  rejected: "danger",
+  activated: "brand",
+};
+
+export const approvalStatusTone: Record<ApprovalStatus, Tone> = {
+  pending: "neutral",
+  approved: "success",
+  rejected: "danger",
+};
+
+export const docStatusTone: Record<DocumentStatus, Tone> = {
+  uploaded: "neutral",
+  validated: "success",
+  rejected: "danger",
+};
 
 export const VENDOR_STATUSES: VendorStatus[] = ["active", "inactive", "blacklisted"];
 export const PO_STATUSES: POStatus[] = [
