@@ -37,7 +37,7 @@ function Linkedin({ className }: { className?: string }) {
 }
 
 /* Live app URL — overridable per environment, defaults to local dev (:3019). */
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3019";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3060";
 const REPO_URL = "https://github.com/dclawstack/dclaw-vendor";
 
 /* ------------------------------------------------------------------ */
