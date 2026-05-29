@@ -45,6 +45,14 @@ class Settings(BaseSettings):
     # Base URL the app is reachable at, used to build local download links.
     public_base_url: str = "http://localhost:8146"
 
+    # ----- ERP / procurement integration (V6.4) -------------------------
+    # backend: "mock" (sample data, default — dev/CI) or "http" (real ERP REST API).
+    # The HTTP connector is wired but only activates when ERP_BACKEND=http and the
+    # connection vars are set; drop in real creds to go live.
+    erp_backend: str = "mock"
+    erp_base_url: str = ""
+    erp_api_key: str = ""
+
     class Config:
         env_file = ".env"
         case_sensitive = False
