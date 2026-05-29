@@ -1060,4 +1060,63 @@ export function updateAuditFinding(
   });
 }
 
+// ---------------------------------------------------------------------------
+// Auth (Logto, V8.1)
+// ---------------------------------------------------------------------------
+
+export interface AuthConfig {
+  enabled: boolean;
+  endpoint: string | null;
+  app_id: string | null;
+  audience: string | null;
+}
+
+export interface AuthMe {
+  sub: string;
+  email: string | null;
+  anonymous: boolean;
+}
+
+export function getAuthConfig() {
+  return fetchJson<AuthConfig>("/api/v1/auth/config");
+}
+
+export function getMe() {
+  return fetchJson<AuthMe>("/api/v1/auth/me");
+}
+
+// ---------------------------------------------------------------------------
+// Billing (Stripe, V8.2)
+// ---------------------------------------------------------------------------
+
+export interface Plan {
+  id: string;
+  name: string;
+  price_per_seat: number;
+  features: string[];
+}
+
+export interface Subscription {
+  plan_id: string;
+  plan_name: string;
+  seats: number;
+  status: string;
+  backend: string;
+}
+
+export function getBillingPlans() {
+  return fetchJson<Plan[]>("/api/v1/billing/plans");
+}
+
+export function getSubscription() {
+  return fetchJson<Subscription>("/api/v1/billing/subscription");
+}
+
+export function createCheckout(planId: string, seats = 1) {
+  return fetchJson<{ url: string; backend: string }>("/api/v1/billing/checkout", {
+    method: "POST",
+    body: JSON.stringify({ plan_id: planId, seats }),
+  });
+}
+
 export { ApiError };

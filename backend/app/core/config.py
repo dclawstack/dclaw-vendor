@@ -53,6 +53,23 @@ class Settings(BaseSettings):
     erp_base_url: str = ""
     erp_api_key: str = ""
 
+    # ----- Auth (Logto, V8.1) -------------------------------------------
+    # Disabled by default (dev/CI run open). Set AUTH_ENABLED=true + the Logto
+    # vars to enforce JWT validation on protected routes.
+    auth_enabled: bool = False
+    logto_endpoint: str = ""  # e.g. https://your-tenant.logto.app
+    logto_app_id: str = ""
+    logto_audience: str = ""  # API resource indicator
+
+    # ----- Billing (Stripe, V8.2) ---------------------------------------
+    # backend: "mock" (default) or "stripe". The Stripe backend activates when
+    # STRIPE_API_KEY is set; per-seat price via STRIPE_PRICE_ID.
+    billing_backend: str = "mock"
+    stripe_api_key: str = ""
+    stripe_price_id: str = ""
+    billing_success_url: str = "http://localhost:3060/settings?billing=success"
+    billing_cancel_url: str = "http://localhost:3060/settings?billing=cancel"
+
     class Config:
         env_file = ".env"
         case_sensitive = False

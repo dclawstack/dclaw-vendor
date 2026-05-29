@@ -1,13 +1,16 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.auth import require_user
 from app.core.config import settings
 from app.core.database import init_db
 from app.api.routes import health
 from app.api.v1 import (
     analytics,
     audits,
+    auth,
+    billing,
     contracts,
     copilot,
     diversity,
@@ -45,9 +48,21 @@ app.add_middleware(
 )
 
 app.include_router(health.router, prefix="/health", tags=["health"])
-app.include_router(vendors.router, prefix="/api/v1/vendors", tags=["vendors"])
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(billing.router, prefix="/api/v1/billing", tags=["billing"])
+# Protected data routes: require_user enforces a valid JWT when AUTH_ENABLED=true,
+# and is a no-op (anonymous) otherwise — so dev/CI run open.
 app.include_router(
-    purchase_orders.router, prefix="/api/v1/purchase-orders", tags=["purchase-orders"]
+    vendors.router,
+    prefix="/api/v1/vendors",
+    tags=["vendors"],
+    dependencies=[Depends(require_user)],
+)
+app.include_router(
+    purchase_orders.router,
+    prefix="/api/v1/purchase-orders",
+    tags=["purchase-orders"],
+    dependencies=[Depends(require_user)],
 )
 app.include_router(
     po_line_items.router, prefix="/api/v1/po-line-items", tags=["po-line-items"]

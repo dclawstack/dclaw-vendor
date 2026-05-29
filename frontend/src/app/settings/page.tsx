@@ -13,6 +13,7 @@ import {
   DkPageHeader,
   DkSelect,
 } from "@/components/dk";
+import { BillingPanel } from "@/components/billing-panel";
 import {
   getLLMSettings,
   testLLMConnection,
@@ -252,6 +253,8 @@ export default function SettingsPage() {
           </div>
         </DkCardContent>
       </DkCard>
+
+      <BillingPanel />
     </div>
   );
 }
