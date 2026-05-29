@@ -28,6 +28,12 @@
 - **V1.7 — Frontend API client + types** · PR #54 · issue #12 — Typed `src/lib/api.ts`: domain types mirroring the Pydantic schemas + functions for all vendor/PO/line-item endpoints (`fetchJson`/`fetchVoid`, query-string helper).
 - **V1.8 — Frontend pages** · PR #54 · issue #13 — Five screens with `Dk*` primitives + Lucide icons (light-mode, pill CTAs): app shell with sidebar nav; Dashboard (stat cards, recent POs, vendors-by-status, quick actions); Vendors (table, search, status filter, Add modal); Vendor Detail (info card edit/delete, related POs, Add PO); Purchase Orders (vendor+status filters, Add PO with line-item editor); PO Detail (line-items table, inline receive tracking, status transitions, live total, delete). `next build` green; live API smoke confirmed.
 
+## Phase 2 — AI Vendor Copilot (in progress)
+
+### 2026-05-29
+
+- **V2.1 (partial) — LLM provider config surface** · PR #56 · issue #14 — Config-driven provider settings ahead of the LLM service. Backend: `app_settings` singleton table (migration `fb49db08f9a6`, lands in Neon `vendor` schema), env defaults in `core/config.py` (`LLM_PROVIDER`/`OLLAMA_BASE_URL`/`OLLAMA_MODEL`/`OPENROUTER_API_KEY`/`OPENROUTER_MODEL`/`OPENROUTER_BASE_URL`), `settings_service` (seed-from-env + update + key masking), `GET`/`PATCH /api/v1/settings/llm` (raw key never returned — only `set` flag + masked preview), 4 tests. Frontend: `/settings` page (provider select + Ollama endpoint/model + OpenRouter token/model/base-url) and a sidebar "Settings" entry. **Remaining for V2.1 (awaiting Ollama + OpenRouter key):** the actual `services/llm.py` provider calls + structured-output helper.
+
 ## Phase 8 — Landing (built in parallel, ahead of the Phase-2 pause)
 
 ### 2026-05-29

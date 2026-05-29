@@ -1,3 +1,4 @@
+from app.models.app_setting import AppSetting
 from app.models.base import Base
 from app.models.enums import POStatus, VendorStatus
 from app.models.po_line_item import POLineItem
@@ -11,4 +12,5 @@ __all__ = [
     "POLineItem",
     "VendorStatus",
     "POStatus",
+    "AppSetting",
 ]

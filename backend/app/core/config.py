@@ -16,6 +16,21 @@ class Settings(BaseSettings):
     secret_key: str = "change-me-in-production"
     access_token_expire_minutes: int = 60
 
+    # ----- LLM providers (V2.1) -----------------------------------------
+    # These are the initial/default values. They can be configured at runtime
+    # from the app Settings page (persisted in the app_settings table, which
+    # overrides these). Env names: LLM_PROVIDER, OLLAMA_BASE_URL, OLLAMA_MODEL,
+    # OPENROUTER_API_KEY, OPENROUTER_MODEL, OPENROUTER_BASE_URL.
+    #
+    # provider: "ollama" (local primary), "openrouter" (cloud), or "auto"
+    # (try Ollama first, fall back to OpenRouter).
+    llm_provider: str = "auto"
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "llama3.1"
+    openrouter_api_key: str = ""
+    openrouter_model: str = "moonshotai/kimi-k2"
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+
     class Config:
         env_file = ".env"
         case_sensitive = False

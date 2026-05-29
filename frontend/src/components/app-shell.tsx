@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Building2, FileText, LayoutDashboard, Package } from "lucide-react";
+import {
+  Building2,
+  FileText,
+  LayoutDashboard,
+  Package,
+  Settings,
+} from "lucide-react";
 
 import { DkSidebar } from "@/components/dk";
 
@@ -15,6 +21,12 @@ const groups = [
         href: "/purchase-orders",
         icon: <FileText className="h-4 w-4" />,
       },
+    ],
+  },
+  {
+    label: "Configure",
+    items: [
+      { label: "Settings", href: "/settings", icon: <Settings className="h-4 w-4" /> },
     ],
   },
 ];

@@ -11,6 +11,11 @@ from app.schemas.purchase_order import (
     PurchaseOrderRead,
     PurchaseOrderUpdate,
 )
+from app.schemas.settings import (
+    LLMProvider,
+    LLMSettingsRead,
+    LLMSettingsUpdate,
+)
 from app.schemas.vendor import (
     VendorCreate,
     VendorList,
@@ -32,4 +37,7 @@ __all__ = [
     "POLineItemUpdate",
     "POLineItemRead",
     "POLineItemList",
+    "LLMProvider",
+    "LLMSettingsRead",
+    "LLMSettingsUpdate",
 ]
