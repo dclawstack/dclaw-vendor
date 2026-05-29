@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Globe, Pencil, Plus, Sparkles, Tags, Trash2 } from "lucide-react";
 
+import { ContractsPanel } from "@/components/contracts-panel";
 import { PerformancePanel } from "@/components/performance-panel";
+import { RiskPanel } from "@/components/risk-panel";
 import {
   DkBadge,
   DkButton,
@@ -304,6 +306,8 @@ export default function VendorDetailPage() {
       )}
 
       <PerformancePanel vendorId={id} />
+      <RiskPanel vendorId={id} />
+      <ContractsPanel vendorId={id} />
 
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xl font-semibold text-ink">Purchase orders</h2>

@@ -621,4 +621,125 @@ export function getBenchmark(vendorId: string) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Risk (Phase 6, V6.1)
+// ---------------------------------------------------------------------------
+
+export type RiskLevel = "low" | "medium" | "high";
+
+export interface RiskFactor {
+  type: string;
+  severity: "low" | "medium" | "high";
+  note: string;
+}
+
+export interface RiskAssessment {
+  id: string;
+  vendor_id: string;
+  overall_level: RiskLevel;
+  overall_score: number;
+  factors: RiskFactor[];
+  summary: string | null;
+  created_at: string;
+}
+
+export interface RiskChange {
+  type: string;
+  change: "new" | "increased" | "decreased" | "resolved";
+  from_severity: string | null;
+  to_severity: string | null;
+}
+
+export interface RiskMonitorResult {
+  assessment: RiskAssessment;
+  changes: RiskChange[];
+}
+
+export function assessVendorRisk(vendorId: string) {
+  return fetchJson<RiskMonitorResult>(`/api/v1/risk/vendors/${vendorId}/assess`, {
+    method: "POST",
+  });
+}
+
+export async function getLatestRisk(vendorId: string): Promise<RiskAssessment | null> {
+  try {
+    return await fetchJson<RiskAssessment>(`/api/v1/risk/vendors/${vendorId}/latest`);
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null;
+    throw e;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Contracts (Phase 6, V6.2)
+// ---------------------------------------------------------------------------
+
+export type ContractStatus =
+  | "draft"
+  | "active"
+  | "expiring"
+  | "expired"
+  | "terminated";
+
+export interface Contract {
+  id: string;
+  vendor_id: string;
+  title: string;
+  status: ContractStatus;
+  start_date: string | null;
+  end_date: string | null;
+  value: number | null;
+  auto_renew: boolean;
+  key_terms: Record<string, string | null> | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContractCreate {
+  vendor_id: string;
+  title: string;
+  start_date?: string | null;
+  end_date?: string | null;
+  value?: number | null;
+  auto_renew?: boolean;
+  notes?: string | null;
+}
+
+export interface RenewalItem {
+  contract_id: string;
+  vendor_id: string;
+  title: string;
+  end_date: string | null;
+  days_to_expiry: number | null;
+  auto_renew: boolean;
+  status: ContractStatus;
+}
+
+export function listContracts(params: { vendor_id?: string; status?: ContractStatus | "" } = {}) {
+  return fetchJson<Paginated<Contract>>(`/api/v1/contracts${qs(params)}`);
+}
+
+export function createContract(body: ContractCreate) {
+  return fetchJson<Contract>("/api/v1/contracts", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteContract(id: string) {
+  return fetchVoid(`/api/v1/contracts/${id}`, { method: "DELETE" });
+}
+
+export function extractContractTerms(id: string, text: string) {
+  return fetchJson<Contract>(`/api/v1/contracts/${id}/extract`, {
+    method: "POST",
+    body: JSON.stringify({ text }),
+  });
+}
+
+export function listRenewals() {
+  return fetchJson<RenewalItem[]>("/api/v1/contracts/renewals");
+}
+
 export { ApiError };

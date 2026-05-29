@@ -45,3 +45,21 @@ class DocumentStatus(str, enum.Enum):
     uploaded = "uploaded"
     validated = "validated"
     rejected = "rejected"
+
+
+class RiskLevel(str, enum.Enum):
+    """Overall vendor risk band (Phase 6, V6.1)."""
+
+    low = "low"
+    medium = "medium"
+    high = "high"
+
+
+class ContractStatus(str, enum.Enum):
+    """Lifecycle of a vendor contract (Phase 6, V6.2)."""
+
+    draft = "draft"
+    active = "active"
+    expiring = "expiring"
+    expired = "expired"
+    terminated = "terminated"
