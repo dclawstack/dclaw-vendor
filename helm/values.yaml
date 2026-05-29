@@ -2,11 +2,11 @@ replicaCount: 1
 
 image:
   backend:
-    repository: ghcr.io/dclawstack/dclaw-crm-backend
+    repository: ghcr.io/dclawstack/dclaw-vendor-backend
     tag: latest
     pullPolicy: IfNotPresent
   frontend:
-    repository: ghcr.io/dclawstack/dclaw-crm-frontend
+    repository: ghcr.io/dclawstack/dclaw-vendor-frontend
     tag: latest
     pullPolicy: IfNotPresent
 
@@ -18,12 +18,36 @@ service:
     type: ClusterIP
     port: 3060
 
+# Prometheus scrape annotations applied to the backend pod (V8.3 /metrics).
+metrics:
+  enabled: true
+  port: 8146
+  path: /metrics
+
 ingress:
   enabled: false
-  className: ""
-  annotations: {}
-  hosts: []
-  tls: []
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  host: vendor.dclaw.example.com
+  tls:
+    enabled: true
+    secretName: dclaw-vendor-tls
+
+# CloudNativePG-managed Postgres cluster (V8.4). When enabled, a CNPG Cluster is
+# created and the backend points at its read-write service. Requires the
+# CloudNativePG operator installed in the cluster.
+postgres:
+  cnpg:
+    enabled: true
+    instances: 2
+    storageSize: 10Gi
+    database: dclaw_vendor
+    owner: dclaw
+    # Override in a real deployment (e.g. --set or a sealed secret).
+    password: change-me
+  # Schema for app domain tables on the managed DB.
+  schema: vendor
 
 resources: {}
 

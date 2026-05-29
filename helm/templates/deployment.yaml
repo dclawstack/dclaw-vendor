@@ -16,6 +16,12 @@ spec:
       labels:
         app: {{ include "dclaw-app.name" . }}
         component: backend
+      {{- if .Values.metrics.enabled }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        prometheus.io/path: {{ .Values.metrics.path | quote }}
+      {{- end }}
     spec:
       containers:
         - name: backend

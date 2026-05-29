@@ -1,0 +1,21 @@
+{{- if .Values.postgres.cnpg.enabled }}
+# CloudNativePG-managed Postgres (V8.4). Requires the CloudNativePG operator.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "dclaw-app.fullname" . }}-pg
+  labels:
+    app: {{ include "dclaw-app.name" . }}
+    component: database
+spec:
+  instances: {{ .Values.postgres.cnpg.instances }}
+  storage:
+    size: {{ .Values.postgres.cnpg.storageSize }}
+  bootstrap:
+    initdb:
+      database: {{ .Values.postgres.cnpg.database }}
+      owner: {{ .Values.postgres.cnpg.owner }}
+      secret:
+        name: {{ include "dclaw-app.fullname" . }}-pg-creds
+  # Read-write service is exposed as <fullname>-pg-rw (used by DATABASE_URL).
+{{- end }}

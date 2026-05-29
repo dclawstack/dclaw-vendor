@@ -5,6 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.auth import require_user
 from app.core.config import settings
 from app.core.database import init_db
+from app.core.observability import (
+    PrometheusMiddleware,
+    log,
+    metrics_endpoint,
+    setup_logging,
+)
 from app.api.routes import health
 from app.api.v1 import (
     analytics,
@@ -29,6 +35,8 @@ from app.api.v1 import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    setup_logging()
+    log.info("startup", app=settings.app_name, env=settings.app_env)
     await init_db()
     yield
 
@@ -39,6 +47,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(PrometheusMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -47,6 +56,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_route("/metrics", metrics_endpoint)
 app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(billing.router, prefix="/api/v1/billing", tags=["billing"])
