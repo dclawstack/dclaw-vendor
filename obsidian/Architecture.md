@@ -18,12 +18,12 @@
 
 | Frontend | Backend | DB |
 |----------|---------|-----|
-| 3019 | 8106 | `dclaw_vendor` |
+| 3060 | 8146 | `dclaw_vendor` |
 
-> **Canonical (locked V0.1):** `8106` backend / `3019` frontend / DB `dclaw_vendor`, base path `/api/v1`.
+> **Canonical (locked V0.1):** `8146` backend / `3060` frontend / DB `dclaw_vendor`, base path `/api/v1`.
 > Reconciled from the shared DClaw port registry (AGENTS.md). The stale `REVISED-PRD.md` ports
 > (3032 / 18102) are placeholders and are superseded by these. `docker-compose.yml`, both
-> Dockerfiles, `.env.example`, and AGENTS.md all agree on `8106 / 3019`.
+> Dockerfiles, `.env.example`, and AGENTS.md all agree on `8146 / 3060`.
 
 ## API surface (PRODUCT-SPEC)
 

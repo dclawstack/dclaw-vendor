@@ -2,7 +2,7 @@
 
 > Synthesised on 2026-05-29 from `AGENTS.md`, `REVISED-PRD.md` (v2.3), `PRODUCT-SPEC.md`, `SCALING-PLAYBOOK.md` + a ground-truth read of the source tree.
 > **Reality check:** despite docs saying "Tier 2 — Partial", the backend is a *bare scaffold* (only `models/base.py`, `repositories/base_repo.py`). No domain models/schemas/repos/routes/services; frontend `src/app` empty; no `dclaw-manifest.json`. **This plan builds the domain app from near-zero.**
-> Canonical config: backend **8106**, frontend **3019**, DB `dclaw_vendor`, base path `/api/v1`.
+> Canonical config: backend **8146**, frontend **3060**, DB `dclaw_vendor`, base path `/api/v1`.
 >
 > Each leaf task below has a stable ID (e.g. `V1.2`). These IDs are mirrored 1:1 into the Neon tracking DB and the GitHub Project issues. **Status here is a snapshot — the GitHub Project + Neon `tracking` schema are the live source of truth.**
 
@@ -14,7 +14,7 @@ Legend — **Track**: Code · Docs · Infra · Planning · AI · Frontend  ·  *
 *Goal: a clean, correctly-wired, DPanel-registered scaffold that boots end-to-end before any domain code.*
 
 - [ ] **V0.1 — Resolve config & ports** · Infra · P0 · 1h
-  - [ ] Confirm `.env.example` (backend 8106 / frontend 3019 / `dclaw_vendor`) is canonical; reconcile stale PRD ports (3032/18102)
+  - [ ] Confirm `.env.example` (backend 8146 / frontend 3060 / `dclaw_vendor`) is canonical; reconcile stale PRD ports (3032/18102)
   - [ ] Add a real `.env` for local dev (gitignored)
   - [ ] Update `obsidian/Architecture.md` "Ports TBD" note → resolved
 - [ ] **V0.2 — DPanel manifest** · Infra · P0 · 1h
@@ -163,7 +163,7 @@ Legend — **Track**: Code · Docs · Infra · Planning · AI · Frontend  ·  *
   - [ ] Scaffold standalone `landing/` Next.js app at repo root (own `package.json`: next + react + lucide-react) — mirrors dclaw-marketing's `landing/`; **Vercel hookup deferred**
   - [ ] Apply DKube brand (Poppins, `--dk-*` purple tokens, dclaw logos in `public/brand/`)
   - [ ] **Lean single page**: Hero (eyebrow + headline + lede) · Features · FinalCTA · Footer (©One Convergence · DKube tagline)
-  - [ ] **Hero CTA button → app frontend** (`NEXT_PUBLIC_APP_URL`, dev `http://localhost:3019`)
+  - [ ] **Hero CTA button → app frontend** (`NEXT_PUBLIC_APP_URL`, dev `http://localhost:3060`)
   - [ ] Responsive, light-mode; note Vercel deploy as a follow-up (not wired now)
 
 ---

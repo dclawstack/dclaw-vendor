@@ -6,16 +6,16 @@
   "tagline": "AI-native vendor & purchase order management",
   "description": "Supplier directory, purchase orders, onboarding, performance tracking, and an AI Vendor Copilot. Evaluate, onboard, and manage vendors end-to-end. Open-source. AI-first.",
   "color": "#6366F1",
-  "icon": "package",
+  "icon": "/icons/vendor.svg",
   "version": "1.0.0",
-  "entrypoint": "http://localhost:3019",
-  "api_base": "http://localhost:8106/api/v1",
+  "entrypoint": "http://localhost:3060",
+  "api_base": "http://localhost:8146/api/v1",
   "permissions": [],
   "requires_auth": false,
   "billing_plan": "free",
   "ports": {
-    "backend": 8106,
-    "frontend": 3019
+    "backend": 8146,
+    "frontend": 3060
   },
   "database": "dclaw_vendor",
   "routes": {
