@@ -5,7 +5,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import init_db
 from app.api.routes import health
-from app.api.v1 import po_line_items, purchase_orders, settings as settings_routes, vendors
+from app.api.v1 import (
+    copilot,
+    po_line_items,
+    purchase_orders,
+    settings as settings_routes,
+    vendors,
+)
 
 
 @asynccontextmanager
@@ -37,3 +43,4 @@ app.include_router(
     po_line_items.router, prefix="/api/v1/po-line-items", tags=["po-line-items"]
 )
 app.include_router(settings_routes.router, prefix="/api/v1/settings", tags=["settings"])
+app.include_router(copilot.router, prefix="/api/v1/copilot", tags=["copilot"])
