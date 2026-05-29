@@ -5,7 +5,6 @@ import {
   Building2,
   FileText,
   LayoutDashboard,
-  Package,
   Settings,
 } from "lucide-react";
 
@@ -40,7 +39,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           href="/"
           className="flex items-center gap-2 px-5 py-5 font-display text-lg font-bold text-ink"
         >
-          <Package className="h-5 w-5 text-brand" />
+          <img src="/brand/logos/dclaw-icon-purple.svg" alt="" className="h-6 w-6" />
           DClaw Vendor
         </Link>
         <DkSidebar groups={groups} className="border-r-0" />

@@ -1,12 +1,13 @@
-<svg viewBox="0 0 350 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DClaw Marketing">
-  <title>DClaw Marketing</title>
-  <!-- Mark (inverted for dark backgrounds) -->
+<svg viewBox="0 0 296 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DClaw Vendor">
+  <title>DClaw Vendor</title>
   <rect width="64" height="64" rx="14" fill="#FFFFFF"/>
-  <circle cx="18" cy="46" r="4" fill="#7660A8"/>
-  <path d="M18 34.5 A 11.5 11.5 0 0 1 29.5 46" stroke="#7660A8" stroke-width="5" stroke-linecap="round" fill="none"/>
-  <path d="M18 25.5 A 20.5 20.5 0 0 1 38.5 46" stroke="#7660A8" stroke-width="5" stroke-linecap="round" fill="none"/>
-  <path d="M18 16.5 A 29.5 29.5 0 0 1 47.5 46" stroke="#7660A8" stroke-width="5" stroke-linecap="round" fill="none"/>
-  <!-- Wordmark: white "DClaw" + lighter "Marketing" for dark backgrounds -->
+  <g transform="translate(13.5 14) scale(1.55)" fill="none" stroke="#7660A8" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m11 17 2 2a1 1 0 1 0 3-3"/>
+    <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/>
+    <path d="m21 3 1 11h-2"/>
+    <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/>
+    <path d="M3 4h8"/>
+  </g>
   <text x="80" y="42" font-family="Poppins, system-ui, sans-serif" font-weight="800" font-size="30" fill="#FFFFFF" letter-spacing="-0.02em">DClaw</text>
-  <text x="187" y="42" font-family="Poppins, system-ui, sans-serif" font-weight="500" font-size="30" fill="#C9C0DE" letter-spacing="-0.02em">Marketing</text>
+  <text x="187" y="42" font-family="Poppins, system-ui, sans-serif" font-weight="500" font-size="30" fill="#C9C0DE" letter-spacing="-0.02em">Vendor</text>
 </svg>
