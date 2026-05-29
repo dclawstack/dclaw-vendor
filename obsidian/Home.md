@@ -10,6 +10,7 @@
 - [[Project Overview]] — what DClaw Vendor is and who it's for
 - [[Architecture]] — stack, ports, directory layout, anti-patterns
 - [[Roadmap]] — P0 → P1 → P2 feature plan
+- [[Dev Plan]] — phase-wise build plan (mirrored to Neon + GitHub Project)
 - [[Open Issues]] — known gaps
 - [[Glossary]] — terms and acronyms
 
