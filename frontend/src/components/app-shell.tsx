@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Building2,
   FileText,
@@ -14,7 +15,7 @@ import { CopilotWidget } from "@/components/copilot-widget";
 const groups = [
   {
     items: [
-      { label: "Dashboard", href: "/", icon: <LayoutDashboard className="h-4 w-4" /> },
+      { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-4 w-4" /> },
       { label: "Vendors", href: "/vendors", icon: <Building2 className="h-4 w-4" /> },
       {
         label: "Purchase Orders",
@@ -32,11 +33,14 @@ const groups = [
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  // Root "/" is the bare welcome splash — no sidebar chrome.
+  if (pathname === "/") return <>{children}</>;
   return (
     <div className="flex min-h-screen">
       <div className="flex w-60 shrink-0 flex-col border-r border-[var(--dk-border)] bg-white">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-2 px-5 py-5 font-display text-lg font-bold text-ink"
         >
           <img src="/brand/logos/dclaw-icon-purple.svg" alt="" className="h-6 w-6" />
