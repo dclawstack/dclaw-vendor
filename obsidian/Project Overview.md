@@ -21,7 +21,14 @@ Screens: Dashboard · Vendors · Vendor Detail · Purchase Orders · PO Detail (
 
 ## Maturity
 
-Tier 2 (Building). **Phase 0 complete** — scaffold hardened, DPanel-registered, DKube design system + `dk/` primitives in place. **Phase 1 backend complete** — Vendor / PurchaseOrder / POLineItem models, schemas, repositories, CRUD API, alembic migration, and tests (20 passing). Runtime DB tables live in the Neon `vendor` schema (via `schema_translate_map`); local/CI use `public`. Frontend pages (V1.7/V1.8) and the AI Copilot (Phase 2+) next. See [[Build Log]], [[Roadmap]], [[Open Issues]].
+Tier 2 (Building). **22 of 48 tasks done** — Phases 0, 1, and 2 complete, plus the landing site.
+
+- **Phase 0 ✅** — scaffold hardened, DPanel-registered, DKube design system + `dk/` primitives.
+- **Phase 1 ✅** — Vendor / PurchaseOrder / POLineItem: models, schemas, repositories, CRUD API, alembic migration, **and** the 5 frontend screens (dashboard, vendors, vendor detail, POs, PO detail).
+- **Phase 2 ✅ (AI Vendor Copilot)** — LLM service (Ollama primary + OpenRouter fallback, structured output), vendor evaluation engine, query-based retrieval, `/copilot/chat` API, floating Copilot chat UI + "Evaluate (AI)" on Vendor Detail. **40 backend tests passing.**
+- **V8.6 ✅** — landing site live at https://dclaw-vendor.vercel.app.
+
+Runtime DB tables live in the Neon `vendor` schema (via `schema_translate_map`); local/CI use `public`. **Next:** Phase 3 (Vendor Directory — classification + enrichment), then Phases 4–8. See [[Build Log]], [[Roadmap]], [[Open Issues]].
 
 ## Related
 
