@@ -9,6 +9,7 @@ from app.api.v1 import (
     analytics,
     contracts,
     copilot,
+    diversity,
     integration,
     onboarding,
     performance,
@@ -16,6 +17,7 @@ from app.api.v1 import (
     purchase_orders,
     risk,
     settings as settings_routes,
+    sustainability,
     vendors,
 )
 
@@ -56,3 +58,5 @@ app.include_router(risk.router, prefix="/api/v1/risk", tags=["risk"])
 app.include_router(contracts.router, prefix="/api/v1/contracts", tags=["contracts"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
 app.include_router(integration.router, prefix="/api/v1/integration", tags=["integration"])
+app.include_router(sustainability.router, prefix="/api/v1/sustainability", tags=["sustainability"])
+app.include_router(diversity.router, prefix="/api/v1/diversity", tags=["diversity"])

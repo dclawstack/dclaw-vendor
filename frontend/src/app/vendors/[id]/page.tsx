@@ -6,8 +6,10 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Globe, Pencil, Plus, Sparkles, Tags, Trash2 } from "lucide-react";
 
 import { ContractsPanel } from "@/components/contracts-panel";
+import { DiversityPanel } from "@/components/diversity-panel";
 import { PerformancePanel } from "@/components/performance-panel";
 import { RiskPanel } from "@/components/risk-panel";
+import { SustainabilityPanel } from "@/components/sustainability-panel";
 import {
   DkBadge,
   DkButton,
@@ -307,6 +309,8 @@ export default function VendorDetailPage() {
 
       <PerformancePanel vendorId={id} />
       <RiskPanel vendorId={id} />
+      <SustainabilityPanel vendorId={id} />
+      <DiversityPanel vendor={vendor} onSaved={load} />
       <ContractsPanel vendorId={id} />
 
       <div className="flex items-center justify-between">

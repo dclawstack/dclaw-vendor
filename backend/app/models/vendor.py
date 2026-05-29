@@ -47,6 +47,14 @@ class Vendor(Base):
     #  "enriched_at": "<iso>"}
     enrichment: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
 
+    # --- Diversity tracking (Phase 7, V7.1) ------------------------------
+    diverse_owned: Mapped[bool] = mapped_column(default=False, nullable=False)
+    # e.g. ["minority_owned", "women_owned", "veteran_owned", "lgbtq_owned",
+    #       "disability_owned", "small_business"]
+    diversity_categories: Mapped[list[str] | None] = mapped_column(JSONB)
+    diversity_certified: Mapped[bool] = mapped_column(default=False, nullable=False)
+    certification_body: Mapped[str | None] = mapped_column(String(120))
+
     created_at: Mapped[datetime] = mapped_column(default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(default=utc_now, onupdate=utc_now)
 

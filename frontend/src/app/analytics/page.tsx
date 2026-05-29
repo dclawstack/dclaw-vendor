@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Cable, Lightbulb, RefreshCw, TrendingDown } from "lucide-react";
+import { Cable, Lightbulb, RefreshCw, TrendingDown, Users } from "lucide-react";
 
 import {
   DkBadge,
@@ -18,11 +18,13 @@ import {
   DkTableRow,
 } from "@/components/dk";
 import {
+  getDiversityReport,
   getIntegrationStatus,
   getReconciliation,
   getSpendInsights,
   getSpendSummary,
   syncErp,
+  type DiversityReport,
   type IntegrationStatus,
   type ReconciliationResult,
   type SpendInsights,
@@ -45,16 +47,19 @@ export default function AnalyticsPage() {
   const [status, setStatus] = useState<IntegrationStatus | null>(null);
   const [recon, setRecon] = useState<ReconciliationResult | null>(null);
   const [syncBusy, setSyncBusy] = useState(false);
+  const [diversity, setDiversity] = useState<DiversityReport | null>(null);
 
   const load = useCallback(async () => {
-    const [s, st, rc] = await Promise.all([
+    const [s, st, rc, dv] = await Promise.all([
       getSpendSummary(),
       getIntegrationStatus(),
       getReconciliation(),
+      getDiversityReport(),
     ]);
     setSummary(s);
     setStatus(st);
     setRecon(rc);
+    setDiversity(dv);
   }, []);
 
   useEffect(() => {
@@ -120,6 +125,33 @@ export default function AnalyticsPage() {
           )}
         </DkCardContent>
       </DkCard>
+
+      {/* Diversity report */}
+      {diversity && (
+        <DkCard>
+          <DkCardContent className="flex flex-col gap-3 py-5">
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-brand" />
+              <span className="font-display font-semibold text-ink">Supplier diversity</span>
+              <DkBadge tone="brand">{diversity.diverse_spend_pct.toFixed(0)}% diverse spend</DkBadge>
+            </div>
+            <p className="text-sm text-[var(--dk-fg-2)]">
+              {currency(diversity.diverse_spend)} of {currency(diversity.total_spend)} ·{" "}
+              {diversity.diverse_vendor_count}/{diversity.vendor_count} vendors diverse-owned ·{" "}
+              {diversity.certified_count} certified
+            </p>
+            {diversity.by_category.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {diversity.by_category.map((c) => (
+                  <DkBadge key={c.category} tone="neutral">
+                    {c.category.replace(/_/g, " ")}: {currency(c.spend)} ({c.vendor_count})
+                  </DkBadge>
+                ))}
+              </div>
+            )}
+          </DkCardContent>
+        </DkCard>
+      )}
 
       {/* AI savings */}
       <DkCard>
