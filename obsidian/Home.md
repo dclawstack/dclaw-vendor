@@ -25,9 +25,10 @@
 | **Tagline** | Vendor evaluation |
 | **Category** | Procurement |
 | **Brand color** | `#6366F1` |
-| **Phase** | Future |
-| **Maturity** | 🟡 Tier 2 — Partial |
-| **Stack** | Next.js 14 · FastAPI · SQLAlchemy 2.0 · Postgres 16 |
+| **Progress** | 22/48 tasks — Phases 0–2 ✅ + landing live |
+| **Maturity** | 🟢 Tier 2 — Building (core domain + AI Copilot shipped) |
+| **Live** | Landing: https://dclaw-vendor.vercel.app |
+| **Stack** | Next.js 14 · FastAPI · SQLAlchemy 2.0 · Postgres 16 · Ollama/OpenRouter |
 | **GitHub** | [dclawstack/dclaw-vendor](https://github.com/dclawstack/dclaw-vendor) |
 
 ---

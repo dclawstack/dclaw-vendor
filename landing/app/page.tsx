@@ -126,9 +126,9 @@ function Hero() {
 
           <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl">
             {[
-              { v: "16", l: "API Endpoints" },
+              { v: "21", l: "API Endpoints" },
               { v: "3", l: "Core Entities" },
-              { v: "24", l: "Automated Tests" },
+              { v: "40", l: "Automated Tests" },
               { v: "100", l: "Test Pass Rate" },
             ].map((s) => (
               <div key={s.l} className="border-l-2 border-white/30 pl-4">
