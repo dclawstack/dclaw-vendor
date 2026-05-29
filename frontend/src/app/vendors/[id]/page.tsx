@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Globe, Pencil, Plus, Sparkles, Tags, Trash2 } from "lucide-react";
 
+import { PerformancePanel } from "@/components/performance-panel";
 import {
   DkBadge,
   DkButton,
@@ -301,6 +302,8 @@ export default function VendorDetailPage() {
           </DkCardContent>
         </DkCard>
       )}
+
+      <PerformancePanel vendorId={id} />
 
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xl font-semibold text-ink">Purchase orders</h2>
