@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, KeyRound, Server, Sparkles } from "lucide-react";
+import { Check, KeyRound, Plug, Server, Sparkles, X } from "lucide-react";
 
 import {
   DkBadge,
@@ -15,9 +15,11 @@ import {
 } from "@/components/dk";
 import {
   getLLMSettings,
+  testLLMConnection,
   updateLLMSettings,
   type LLMProvider,
   type LLMSettings,
+  type LLMTestResult,
 } from "@/lib/api";
 
 const PROVIDERS: { value: LLMProvider; label: string; hint: string }[] = [
@@ -39,6 +41,8 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<LLMTestResult | null>(null);
 
   function hydrate(s: LLMSettings) {
     setSettings(s);
@@ -80,6 +84,22 @@ export default function SettingsPage() {
     }
   }
 
+  async function runTest() {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      setTestResult(await testLLMConnection());
+    } catch (e) {
+      setTestResult({
+        ok: false,
+        provider,
+        detail: e instanceof Error ? e.message : "Test failed",
+      });
+    } finally {
+      setTesting(false);
+    }
+  }
+
   if (loading) return <p className="text-sm text-[var(--dk-fg-2)]">Loading…</p>;
 
   return (
@@ -89,14 +109,40 @@ export default function SettingsPage() {
         title="Settings"
         description="Configure the LLM providers that power the AI Vendor Copilot."
         actions={
-          <DkButton onClick={save} loading={saving}>
-            {saved ? <Check className="h-4 w-4" /> : null}
-            {saved ? "Saved" : "Save changes"}
-          </DkButton>
+          <>
+            <DkButton variant="secondary" onClick={runTest} loading={testing}>
+              <Plug className="h-4 w-4" /> Test connection
+            </DkButton>
+            <DkButton onClick={save} loading={saving}>
+              {saved ? <Check className="h-4 w-4" /> : null}
+              {saved ? "Saved" : "Save changes"}
+            </DkButton>
+          </>
         }
       />
 
       {error && <p className="text-sm text-[var(--dk-danger)]">{error}</p>}
+
+      {testResult && (
+        <div
+          className={`flex items-start gap-2 rounded-xl border p-3 text-sm ${
+            testResult.ok
+              ? "border-[var(--dk-success)] bg-[var(--dk-success-bg)] text-[var(--dk-success)]"
+              : "border-[var(--dk-danger)] bg-[var(--dk-danger-bg)] text-[var(--dk-danger)]"
+          }`}
+        >
+          {testResult.ok ? (
+            <Check className="mt-0.5 h-4 w-4 shrink-0" />
+          ) : (
+            <X className="mt-0.5 h-4 w-4 shrink-0" />
+          )}
+          <span>
+            {testResult.ok
+              ? `Connected via ${testResult.provider}: ${testResult.detail}`
+              : `Connection failed (${testResult.provider}): ${testResult.detail}`}
+          </span>
+        </div>
+      )}
 
       {/* Provider selection */}
       <DkCard>

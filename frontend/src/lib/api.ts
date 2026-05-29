@@ -286,4 +286,14 @@ export function updateLLMSettings(body: LLMSettingsUpdate) {
   });
 }
 
+export interface LLMTestResult {
+  ok: boolean;
+  provider: string;
+  detail: string;
+}
+
+export function testLLMConnection() {
+  return fetchJson<LLMTestResult>("/api/v1/settings/llm/test", { method: "POST" });
+}
+
 export { ApiError };
