@@ -1,8 +1,10 @@
 import type {
   ApprovalStatus,
+  ContractStatus,
   DocumentStatus,
   OnboardingStatus,
   POStatus,
+  RiskLevel,
   VendorStatus,
   VendorTier,
 } from "@/lib/api";
@@ -74,6 +76,20 @@ export const docStatusTone: Record<DocumentStatus, Tone> = {
   uploaded: "neutral",
   validated: "success",
   rejected: "danger",
+};
+
+export const riskLevelTone: Record<RiskLevel, Tone> = {
+  low: "success",
+  medium: "warning",
+  high: "danger",
+};
+
+export const contractStatusTone: Record<ContractStatus, Tone> = {
+  draft: "neutral",
+  active: "success",
+  expiring: "warning",
+  expired: "danger",
+  terminated: "neutral",
 };
 
 export const VENDOR_STATUSES: VendorStatus[] = ["active", "inactive", "blacklisted"];
