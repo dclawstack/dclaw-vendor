@@ -2,13 +2,15 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
+from typing import Any
+
 from sqlalchemy import Enum, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.utils import utc_now
 from app.models.base import Base
-from app.models.enums import VendorStatus
+from app.models.enums import VendorStatus, VendorTier
 
 if TYPE_CHECKING:
     from app.models.purchase_order import PurchaseOrder
@@ -31,6 +33,19 @@ class Vendor(Base):
         default=VendorStatus.active,
         nullable=False,
     )
+
+    # --- Directory: AI classification + web enrichment (Phase 3) ---------
+    category: Mapped[str | None] = mapped_column(String(120), index=True)
+    industry: Mapped[str | None] = mapped_column(String(120), index=True)
+    tier: Mapped[VendorTier | None] = mapped_column(
+        Enum(VendorTier, native_enum=False, length=20), index=True
+    )
+    website: Mapped[str | None] = mapped_column(String(255))
+    # Enriched profile + provenance, e.g.
+    # {"company_size": "...", "founded_year": 1998, "headquarters": "...",
+    #  "description": "...", "source": "web"|"inferred", "fetched_url": "...",
+    #  "enriched_at": "<iso>"}
+    enrichment: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
 
     created_at: Mapped[datetime] = mapped_column(default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(default=utc_now, onupdate=utc_now)

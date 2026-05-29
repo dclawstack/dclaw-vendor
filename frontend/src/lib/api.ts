@@ -54,7 +54,19 @@ export async function getHealth() {
 // ---------------------------------------------------------------------------
 
 export type VendorStatus = "active" | "inactive" | "blacklisted";
+export type VendorTier = "strategic" | "preferred" | "approved" | "transactional";
 export type POStatus = "draft" | "sent" | "partial" | "received" | "cancelled";
+
+export interface VendorEnrichment {
+  company_size?: string | null;
+  founded_year?: number | null;
+  headquarters?: string | null;
+  industry?: string | null;
+  description?: string | null;
+  source: "web" | "inferred";
+  fetched_url: string | null;
+  enriched_at: string;
+}
 
 export interface Vendor {
   id: string;
@@ -65,6 +77,11 @@ export interface Vendor {
   address: string | null;
   payment_terms: string | null;
   status: VendorStatus;
+  category: string | null;
+  industry: string | null;
+  tier: VendorTier | null;
+  website: string | null;
+  enrichment: VendorEnrichment | null;
   created_at: string;
   updated_at: string;
 }
@@ -77,6 +94,10 @@ export interface VendorCreate {
   address?: string | null;
   payment_terms?: string | null;
   status?: VendorStatus;
+  category?: string | null;
+  industry?: string | null;
+  tier?: VendorTier | null;
+  website?: string | null;
 }
 
 export type VendorUpdate = Partial<VendorCreate>;
@@ -153,11 +174,77 @@ export function listVendors(
   params: {
     search?: string;
     status?: VendorStatus | "";
+    category?: string;
+    tier?: VendorTier | "";
     limit?: number;
     offset?: number;
   } = {},
 ) {
   return fetchJson<Paginated<Vendor>>(`/api/v1/vendors${qs(params)}`);
+}
+
+export interface FacetCount {
+  value: string;
+  count: number;
+}
+
+export interface VendorFacets {
+  status: FacetCount[];
+  category: FacetCount[];
+  tier: FacetCount[];
+  industry: FacetCount[];
+  total: number;
+}
+
+export function getVendorFacets() {
+  return fetchJson<VendorFacets>("/api/v1/vendors/facets");
+}
+
+export interface VendorClassification {
+  category: string;
+  industry: string;
+  tier: VendorTier;
+  rationale: string;
+}
+
+export interface VendorClassificationResult {
+  vendor_id: string;
+  vendor_name: string;
+  classification: VendorClassification | null;
+  error: string | null;
+}
+
+export function classifyVendor(id: string) {
+  return fetchJson<VendorClassificationResult>(
+    `/api/v1/vendors/${id}/classify`,
+    { method: "POST" },
+  );
+}
+
+export interface BatchClassificationResponse {
+  results: VendorClassificationResult[];
+  classified: number;
+  failed: number;
+}
+
+export function classifyVendorsBatch(onlyUnclassified = true) {
+  return fetchJson<BatchClassificationResponse>(
+    `/api/v1/vendors/classify-batch${qs({ only_unclassified: onlyUnclassified ? "true" : "false" })}`,
+    { method: "POST" },
+  );
+}
+
+export interface VendorEnrichmentResult {
+  vendor_id: string;
+  vendor_name: string;
+  enrichment: VendorEnrichment | null;
+  error: string | null;
+}
+
+export function enrichVendor(id: string) {
+  return fetchJson<VendorEnrichmentResult>(`/api/v1/vendors/${id}/enrich`, {
+    method: "POST",
+  });
 }
 
 export function getVendor(id: string) {

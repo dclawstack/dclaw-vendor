@@ -1,4 +1,4 @@
-import type { POStatus, VendorStatus } from "@/lib/api";
+import type { POStatus, VendorStatus, VendorTier } from "@/lib/api";
 
 type Tone = "brand" | "neutral" | "success" | "warning" | "danger" | "info" | "outline";
 
@@ -33,6 +33,20 @@ export const poStatusTone: Record<POStatus, Tone> = {
   received: "success",
   cancelled: "danger",
 };
+
+export const tierTone: Record<VendorTier, Tone> = {
+  strategic: "brand",
+  preferred: "info",
+  approved: "success",
+  transactional: "neutral",
+};
+
+export const VENDOR_TIERS: VendorTier[] = [
+  "strategic",
+  "preferred",
+  "approved",
+  "transactional",
+];
 
 export const VENDOR_STATUSES: VendorStatus[] = ["active", "inactive", "blacklisted"];
 export const PO_STATUSES: POStatus[] = [

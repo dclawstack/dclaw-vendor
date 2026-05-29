@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Building2, Plus, Search } from "lucide-react";
+import { Building2, Plus, Search, Sparkles } from "lucide-react";
 
 import {
   DkBadge,
   DkButton,
+  DkChip,
   DkDialog,
   DkDialogContent,
   DkDialogFooter,
@@ -24,13 +25,22 @@ import {
   DkTableRow,
 } from "@/components/dk";
 import {
+  classifyVendorsBatch,
   createVendor,
+  getVendorFacets,
   listVendors,
   type Vendor,
   type VendorCreate,
+  type VendorFacets,
   type VendorStatus,
+  type VendorTier,
 } from "@/lib/api";
-import { VENDOR_STATUSES, vendorStatusTone } from "@/lib/format";
+import {
+  VENDOR_STATUSES,
+  VENDOR_TIERS,
+  tierTone,
+  vendorStatusTone,
+} from "@/lib/format";
 
 const emptyForm: VendorCreate = {
   name: "",
@@ -38,15 +48,21 @@ const emptyForm: VendorCreate = {
   email: "",
   phone: "",
   payment_terms: "",
+  website: "",
+  category: "",
   status: "active",
 };
 
 export default function VendorsPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [total, setTotal] = useState(0);
+  const [facets, setFacets] = useState<VendorFacets | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<VendorStatus | "">("");
+  const [tierFilter, setTierFilter] = useState<VendorTier | "">("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [classifying, setClassifying] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<VendorCreate>(emptyForm);
@@ -56,13 +72,22 @@ export default function VendorsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await listVendors({ search, status: statusFilter });
+      const [res, fc] = await Promise.all([
+        listVendors({
+          search,
+          status: statusFilter,
+          tier: tierFilter,
+          category: categoryFilter,
+        }),
+        getVendorFacets(),
+      ]);
       setVendors(res.items);
       setTotal(res.total);
+      setFacets(fc);
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter]);
+  }, [search, statusFilter, tierFilter, categoryFilter]);
 
   useEffect(() => {
     const t = setTimeout(load, 250);
@@ -88,18 +113,59 @@ export default function VendorsPage() {
     }
   }
 
+  async function bulkClassify() {
+    setClassifying(true);
+    try {
+      await classifyVendorsBatch(true);
+      await load();
+    } catch {
+      /* surfaced via empty result; keep the directory usable */
+    } finally {
+      setClassifying(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <DkPageHeader
         eyebrow="Procurement"
-        title="Vendors"
-        description="Your supplier directory."
+        title="Vendor Directory"
+        description="Your classified, enriched supplier directory."
         actions={
-          <DkButton onClick={() => setOpen(true)}>
-            <Plus className="h-4 w-4" /> Add Vendor
-          </DkButton>
+          <div className="flex gap-2">
+            <DkButton variant="secondary" onClick={bulkClassify} loading={classifying}>
+              <Sparkles className="h-4 w-4" /> AI Classify
+            </DkButton>
+            <DkButton onClick={() => setOpen(true)}>
+              <Plus className="h-4 w-4" /> Add Vendor
+            </DkButton>
+          </div>
         }
       />
+
+      {facets && facets.category.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <DkChip
+            tone={categoryFilter === "" ? "brand" : "outline"}
+            className="cursor-pointer"
+            onClick={() => setCategoryFilter("")}
+          >
+            All categories
+          </DkChip>
+          {facets.category.map((c) => (
+            <DkChip
+              key={c.value}
+              tone={categoryFilter === c.value ? "brand" : "outline"}
+              className="cursor-pointer"
+              onClick={() =>
+                setCategoryFilter(categoryFilter === c.value ? "" : c.value)
+              }
+            >
+              {c.value} · {c.count}
+            </DkChip>
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
@@ -111,7 +177,20 @@ export default function VendorsPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div className="sm:w-48">
+        <div className="sm:w-44">
+          <DkSelect
+            value={tierFilter}
+            onChange={(e) => setTierFilter(e.target.value as VendorTier | "")}
+          >
+            <option value="">All tiers</option>
+            {VENDOR_TIERS.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </DkSelect>
+        </div>
+        <div className="sm:w-44">
           <DkSelect
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as VendorStatus | "")}
@@ -145,8 +224,8 @@ export default function VendorsPage() {
             <DkTableHeader>
               <DkTableRow>
                 <DkTableHead>Name</DkTableHead>
-                <DkTableHead>Email</DkTableHead>
-                <DkTableHead>Payment terms</DkTableHead>
+                <DkTableHead>Category</DkTableHead>
+                <DkTableHead>Tier</DkTableHead>
                 <DkTableHead>Status</DkTableHead>
               </DkTableRow>
             </DkTableHeader>
@@ -160,9 +239,20 @@ export default function VendorsPage() {
                     >
                       {v.name}
                     </Link>
+                    {v.enrichment && (
+                      <DkChip tone="info" className="ml-2 align-middle">
+                        enriched
+                      </DkChip>
+                    )}
                   </DkTableCell>
-                  <DkTableCell>{v.email || "—"}</DkTableCell>
-                  <DkTableCell>{v.payment_terms || "—"}</DkTableCell>
+                  <DkTableCell>{v.category || "—"}</DkTableCell>
+                  <DkTableCell>
+                    {v.tier ? (
+                      <DkBadge tone={tierTone[v.tier]}>{v.tier}</DkBadge>
+                    ) : (
+                      "—"
+                    )}
+                  </DkTableCell>
                   <DkTableCell>
                     <DkBadge tone={vendorStatusTone[v.status]}>{v.status}</DkBadge>
                   </DkTableCell>
@@ -212,6 +302,22 @@ export default function VendorsPage() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
+              <DkLabel>Website</DkLabel>
+              <DkInput
+                value={form.website ?? ""}
+                onChange={(e) => setForm({ ...form, website: e.target.value })}
+                placeholder="acme.com"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <DkLabel>Category</DkLabel>
+              <DkInput
+                value={form.category ?? ""}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                placeholder="IT Services"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
               <DkLabel>Payment terms</DkLabel>
               <DkInput
                 value={form.payment_terms ?? ""}
@@ -220,20 +326,38 @@ export default function VendorsPage() {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <DkLabel>Status</DkLabel>
-            <DkSelect
-              value={form.status}
-              onChange={(e) =>
-                setForm({ ...form, status: e.target.value as VendorStatus })
-              }
-            >
-              {VENDOR_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </DkSelect>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <DkLabel>Tier</DkLabel>
+              <DkSelect
+                value={form.tier ?? ""}
+                onChange={(e) =>
+                  setForm({ ...form, tier: (e.target.value || null) as VendorTier | null })
+                }
+              >
+                <option value="">Unclassified</option>
+                {VENDOR_TIERS.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </DkSelect>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <DkLabel>Status</DkLabel>
+              <DkSelect
+                value={form.status}
+                onChange={(e) =>
+                  setForm({ ...form, status: e.target.value as VendorStatus })
+                }
+              >
+                {VENDOR_STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </DkSelect>
+            </div>
           </div>
           {error && <p className="text-sm text-[var(--dk-danger)]">{error}</p>}
         </DkDialogContent>
