@@ -3,12 +3,13 @@ from logging.config import fileConfig
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 
 from app.core.config import settings
 from app.models.base import Base
+import app.models  # noqa: F401 — register all models on Base.metadata
 
 # this is the Alembic Config object
 config = context.config
@@ -39,14 +40,10 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    if DB_SCHEMA:
-        connection.exec_driver_sql(f'CREATE SCHEMA IF NOT EXISTS "{DB_SCHEMA}"')
-        connection.exec_driver_sql(f'SET search_path TO "{DB_SCHEMA}", public')
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
         version_table_schema=DB_SCHEMA,
-        include_schemas=bool(DB_SCHEMA),
     )
 
     with context.begin_transaction():
@@ -54,11 +51,26 @@ def do_run_migrations(connection: Connection) -> None:
 
 
 async def run_async_migrations() -> None:
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
+    # When targeting a non-default schema (e.g. Neon `vendor`), translate the
+    # default (None) schema of every table — including unqualified DDL — to it
+    # via schema_translate_map. version_table_schema places alembic_version
+    # there too. The schema itself is created in its own committed transaction
+    # first.
+    engine_kwargs: dict = {}
+    if DB_SCHEMA:
+        engine_kwargs["execution_options"] = {
+            "schema_translate_map": {None: DB_SCHEMA}
+        }
+
+    connectable = create_async_engine(
+        settings.database_url,
         poolclass=pool.NullPool,
+        **engine_kwargs,
     )
+
+    if DB_SCHEMA:
+        async with connectable.begin() as conn:
+            await conn.exec_driver_sql(f'CREATE SCHEMA IF NOT EXISTS "{DB_SCHEMA}"')
 
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
