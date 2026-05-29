@@ -38,7 +38,8 @@
 
 ### 2026-05-29
 
-- **V8.6 — Landing site** · PR #55 · issue #48 — Standalone `landing/` Next.js 14 app (own `package.json`, dev port 3119) with the DKube brand (`--dk-*` tokens, Poppins, light-mode, pill CTAs, Lucide). Lean single page: Hero (eyebrow + headline + lede + CTA) · Features (5 cards) · FinalCTA · Footer (© One Convergence · DKube tagline). Hero/CTA → app frontend via `NEXT_PUBLIC_APP_URL` (dev `http://localhost:3019`). `next build` green. Vercel deploy deferred.
+- **V8.6 — Landing site** · PR #55 · issue #48 — Standalone `landing/` Next.js 14 app (own `package.json`, dev port 3119) with the DKube brand (`--dk-*` tokens, Poppins, light-mode, pill CTAs, Lucide). Lean single page: Hero (eyebrow + headline + lede + CTA) · Features (5 cards) · FinalCTA · Footer (© One Convergence · DKube tagline). Hero/CTA → app frontend via `NEXT_PUBLIC_APP_URL`. `next build` green.
+- **V8.6 (deploy) — Live on Vercel** · PR #57 — Deployed `landing/` as Vercel project `dclaw-vendor` (scope deepro-mallick-s-projects, root dir = `landing/`, framework nextjs via `landing/vercel.json`), aliased to **https://dclaw-vendor.vercel.app** (HTTP 200). Mirrors dclaw-sales/dclaw-marketing. CTA `NEXT_PUBLIC_APP_URL` interim-points at the GitHub repo until the app frontend is hosted.
 
 ## Related
 - [[Home]] · [[Dev Plan]] · [[Roadmap]] · [[Open Issues]]
