@@ -6,8 +6,10 @@ from app.core.config import settings
 from app.core.database import init_db
 from app.api.routes import health
 from app.api.v1 import (
+    analytics,
     contracts,
     copilot,
+    integration,
     onboarding,
     performance,
     po_line_items,
@@ -52,3 +54,5 @@ app.include_router(onboarding.router, prefix="/api/v1/onboarding", tags=["onboar
 app.include_router(performance.router, prefix="/api/v1/performance", tags=["performance"])
 app.include_router(risk.router, prefix="/api/v1/risk", tags=["risk"])
 app.include_router(contracts.router, prefix="/api/v1/contracts", tags=["contracts"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
+app.include_router(integration.router, prefix="/api/v1/integration", tags=["integration"])

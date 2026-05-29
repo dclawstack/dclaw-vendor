@@ -141,6 +141,7 @@ export interface PurchaseOrder {
   total: number;
   expected_delivery: string | null;
   notes: string | null;
+  external_ref: string | null;
   created_at: string;
   updated_at: string;
   line_items: POLineItem[];
@@ -740,6 +741,100 @@ export function extractContractTerms(id: string, text: string) {
 
 export function listRenewals() {
   return fetchJson<RenewalItem[]>("/api/v1/contracts/renewals");
+}
+
+// ---------------------------------------------------------------------------
+// Spend Analytics (Phase 6, V6.3)
+// ---------------------------------------------------------------------------
+
+export interface SpendBucket {
+  key: string;
+  spend: number;
+  count: number;
+}
+
+export interface SpendSummary {
+  total_spend: number;
+  po_count: number;
+  by_status: SpendBucket[];
+  by_category: SpendBucket[];
+  by_vendor: SpendBucket[];
+  by_month: SpendBucket[];
+}
+
+export interface SavingsOpportunity {
+  title: string;
+  category: string | null;
+  rationale: string;
+  estimated_savings: number;
+}
+
+export interface ConsolidationSuggestion {
+  category: string;
+  vendors: string[];
+  rationale: string;
+}
+
+export interface SpendInsights {
+  total_spend: number;
+  target_savings: number;
+  opportunities: SavingsOpportunity[];
+  consolidation: ConsolidationSuggestion[];
+  summary: string;
+}
+
+export function getSpendSummary() {
+  return fetchJson<SpendSummary>("/api/v1/analytics/spend");
+}
+
+export function getSpendInsights() {
+  return fetchJson<SpendInsights>("/api/v1/analytics/spend/insights", {
+    method: "POST",
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Procurement Integration (Phase 6, V6.4)
+// ---------------------------------------------------------------------------
+
+export interface IntegrationStatus {
+  backend: string;
+  connected: boolean;
+  base_url: string | null;
+}
+
+export interface SyncResult {
+  pulled: number;
+  created: number;
+  updated: number;
+}
+
+export interface ReconciliationRow {
+  external_ref: string;
+  invoice_number: string;
+  invoice_amount: number;
+  po_total: number | null;
+  variance: number | null;
+  status: "matched" | "over_billed" | "under_billed" | "unmatched";
+}
+
+export interface ReconciliationResult {
+  rows: ReconciliationRow[];
+  matched: number;
+  discrepancies: number;
+  unmatched: number;
+}
+
+export function getIntegrationStatus() {
+  return fetchJson<IntegrationStatus>("/api/v1/integration/status");
+}
+
+export function syncErp() {
+  return fetchJson<SyncResult>("/api/v1/integration/sync", { method: "POST" });
+}
+
+export function getReconciliation() {
+  return fetchJson<ReconciliationResult>("/api/v1/integration/reconciliation");
 }
 
 export { ApiError };

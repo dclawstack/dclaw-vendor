@@ -31,6 +31,7 @@ class PurchaseOrderRead(PurchaseOrderBase):
 
     id: uuid.UUID
     total: float
+    external_ref: str | None = None
     created_at: datetime
     updated_at: datetime
     line_items: list[POLineItemRead] = []

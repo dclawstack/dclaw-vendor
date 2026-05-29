@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BarChart3,
   Building2,
   ClipboardCheck,
   FileText,
@@ -27,6 +28,11 @@ const groups = [
         label: "Onboarding",
         href: "/onboarding",
         icon: <ClipboardCheck className="h-4 w-4" />,
+      },
+      {
+        label: "Analytics",
+        href: "/analytics",
+        icon: <BarChart3 className="h-4 w-4" />,
       },
     ],
   },

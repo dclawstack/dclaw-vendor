@@ -34,6 +34,8 @@ class PurchaseOrder(Base):
     total: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     expected_delivery: Mapped[date | None] = mapped_column()
     notes: Mapped[str | None] = mapped_column(Text)
+    # External ERP identifier, used to match/sync POs bidirectionally (V6.4).
+    external_ref: Mapped[str | None] = mapped_column(String(120), index=True)
 
     created_at: Mapped[datetime] = mapped_column(default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(default=utc_now, onupdate=utc_now)
