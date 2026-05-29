@@ -63,3 +63,25 @@ class ContractStatus(str, enum.Enum):
     expiring = "expiring"
     expired = "expired"
     terminated = "terminated"
+
+
+class AuditStatus(str, enum.Enum):
+    """Lifecycle of a vendor audit (Phase 7, V7.4)."""
+
+    scheduled = "scheduled"
+    in_progress = "in_progress"
+    completed = "completed"
+    closed = "closed"
+
+
+class FindingSeverity(str, enum.Enum):
+    low = "low"
+    medium = "medium"
+    high = "high"
+    critical = "critical"
+
+
+class FindingStatus(str, enum.Enum):
+    open = "open"
+    remediating = "remediating"
+    closed = "closed"
