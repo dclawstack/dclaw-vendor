@@ -82,6 +82,10 @@ export interface Vendor {
   tier: VendorTier | null;
   website: string | null;
   enrichment: VendorEnrichment | null;
+  diverse_owned: boolean;
+  diversity_categories: string[] | null;
+  diversity_certified: boolean;
+  certification_body: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -100,7 +104,14 @@ export interface VendorCreate {
   website?: string | null;
 }
 
-export type VendorUpdate = Partial<VendorCreate>;
+export interface VendorCreateExtras {
+  diverse_owned?: boolean;
+  diversity_categories?: string[] | null;
+  diversity_certified?: boolean;
+  certification_body?: string | null;
+}
+
+export type VendorUpdate = Partial<VendorCreate & VendorCreateExtras>;
 
 export interface POLineItem {
   id: string;
@@ -836,5 +847,70 @@ export function syncErp() {
 export function getReconciliation() {
   return fetchJson<ReconciliationResult>("/api/v1/integration/reconciliation");
 }
+
+// ---------------------------------------------------------------------------
+// Sustainability (Phase 7, V7.2)
+// ---------------------------------------------------------------------------
+
+export interface SustainabilityScore {
+  id: string;
+  vendor_id: string;
+  period: string;
+  carbon_footprint: number;
+  environmental_score: number;
+  social_score: number;
+  governance_score: number;
+  overall_score: number;
+  targets: { target: string; by: string }[] | null;
+  summary: string | null;
+  created_at: string;
+}
+
+export function scoreVendorSustainability(vendorId: string, period?: string) {
+  return fetchJson<SustainabilityScore>(
+    `/api/v1/sustainability/vendors/${vendorId}/score`,
+    { method: "POST", body: JSON.stringify({ period: period ?? null }) },
+  );
+}
+
+export async function getLatestSustainability(
+  vendorId: string,
+): Promise<SustainabilityScore | null> {
+  try {
+    return await fetchJson<SustainabilityScore>(
+      `/api/v1/sustainability/vendors/${vendorId}/latest`,
+    );
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null;
+    throw e;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Diversity (Phase 7, V7.1)
+// ---------------------------------------------------------------------------
+
+export interface DiversityReport {
+  total_spend: number;
+  diverse_spend: number;
+  diverse_spend_pct: number;
+  vendor_count: number;
+  diverse_vendor_count: number;
+  certified_count: number;
+  by_category: { category: string; vendor_count: number; spend: number }[];
+}
+
+export function getDiversityReport() {
+  return fetchJson<DiversityReport>("/api/v1/diversity/report");
+}
+
+export const DIVERSITY_CATEGORIES = [
+  "minority_owned",
+  "women_owned",
+  "veteran_owned",
+  "lgbtq_owned",
+  "disability_owned",
+  "small_business",
+];
 
 export { ApiError };

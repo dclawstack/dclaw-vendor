@@ -16,6 +16,7 @@ from app.models.performance import PerformanceScore
 from app.models.po_line_item import POLineItem
 from app.models.purchase_order import PurchaseOrder
 from app.models.risk import RiskAssessment
+from app.models.sustainability import SustainabilityScore
 from app.models.vendor import Vendor
 
 __all__ = [
@@ -29,6 +30,7 @@ __all__ = [
     "PerformanceScore",
     "RiskAssessment",
     "Contract",
+    "SustainabilityScore",
     "VendorStatus",
     "VendorTier",
     "POStatus",

@@ -19,6 +19,10 @@ class VendorBase(BaseModel):
     industry: str | None = None
     tier: VendorTier | None = None
     website: str | None = None
+    diverse_owned: bool = False
+    diversity_categories: list[str] | None = None
+    diversity_certified: bool = False
+    certification_body: str | None = None
 
 
 class VendorCreate(VendorBase):
@@ -37,6 +41,10 @@ class VendorUpdate(BaseModel):
     industry: str | None = None
     tier: VendorTier | None = None
     website: str | None = None
+    diverse_owned: bool | None = None
+    diversity_categories: list[str] | None = None
+    diversity_certified: bool | None = None
+    certification_body: str | None = None
 
 
 class VendorRead(VendorBase):
