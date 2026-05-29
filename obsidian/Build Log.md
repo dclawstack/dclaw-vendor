@@ -28,5 +28,11 @@
 - **V1.7 — Frontend API client + types** · PR #54 · issue #12 — Typed `src/lib/api.ts`: domain types mirroring the Pydantic schemas + functions for all vendor/PO/line-item endpoints (`fetchJson`/`fetchVoid`, query-string helper).
 - **V1.8 — Frontend pages** · PR #54 · issue #13 — Five screens with `Dk*` primitives + Lucide icons (light-mode, pill CTAs): app shell with sidebar nav; Dashboard (stat cards, recent POs, vendors-by-status, quick actions); Vendors (table, search, status filter, Add modal); Vendor Detail (info card edit/delete, related POs, Add PO); Purchase Orders (vendor+status filters, Add PO with line-item editor); PO Detail (line-items table, inline receive tracking, status transitions, live total, delete). `next build` green; live API smoke confirmed.
 
+## Phase 8 — Landing (built in parallel, ahead of the Phase-2 pause)
+
+### 2026-05-29
+
+- **V8.6 — Landing site** · PR #55 · issue #48 — Standalone `landing/` Next.js 14 app (own `package.json`, dev port 3119) with the DKube brand (`--dk-*` tokens, Poppins, light-mode, pill CTAs, Lucide). Lean single page: Hero (eyebrow + headline + lede + CTA) · Features (5 cards) · FinalCTA · Footer (© One Convergence · DKube tagline). Hero/CTA → app frontend via `NEXT_PUBLIC_APP_URL` (dev `http://localhost:3019`). `next build` green. Vercel deploy deferred.
+
 ## Related
 - [[Home]] · [[Dev Plan]] · [[Roadmap]] · [[Open Issues]]
