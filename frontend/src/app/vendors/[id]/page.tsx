@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
 
 import {
   DkBadge,
@@ -28,11 +28,13 @@ import {
 import {
   createPurchaseOrder,
   deleteVendor,
+  evaluateVendor,
   getVendor,
   listPurchaseOrders,
   updateVendor,
   type PurchaseOrder,
   type Vendor,
+  type VendorEvaluation,
   type VendorStatus,
 } from "@/lib/api";
 import {
@@ -57,6 +59,10 @@ export default function VendorDetailPage() {
   const [form, setForm] = useState<Vendor | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const [evaluating, setEvaluating] = useState(false);
+  const [evaluation, setEvaluation] = useState<VendorEvaluation | null>(null);
+  const [evalError, setEvalError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -108,6 +114,22 @@ export default function VendorDetailPage() {
     router.push(`/purchase-orders/${po.id}`);
   }
 
+  async function runEvaluate() {
+    setEvaluating(true);
+    setEvalError(null);
+    try {
+      const res = await evaluateVendor(id);
+      if (res.evaluation) setEvaluation(res.evaluation);
+      else setEvalError(res.error || "No evaluation returned");
+    } catch (e) {
+      setEvalError(e instanceof Error ? e.message : "Evaluation failed");
+    } finally {
+      setEvaluating(false);
+    }
+  }
+
+  const riskTone = { low: "success", medium: "warning", high: "danger" } as const;
+
   if (loading) return <p className="text-sm text-[var(--dk-fg-2)]">Loading…</p>;
   if (notFound || !vendor)
     return (
@@ -133,6 +155,9 @@ export default function VendorDetailPage() {
         description={vendor.email ?? undefined}
         actions={
           <>
+            <DkButton variant="secondary" onClick={runEvaluate} loading={evaluating}>
+              <Sparkles className="h-4 w-4" /> Evaluate (AI)
+            </DkButton>
             <DkButton
               variant="secondary"
               onClick={() => {
@@ -161,6 +186,39 @@ export default function VendorDetailPage() {
           <Field label="Added">{formatDate(vendor.created_at)}</Field>
         </DkCardContent>
       </DkCard>
+
+      {evalError && (
+        <p className="text-sm text-[var(--dk-danger)]">AI evaluation: {evalError}</p>
+      )}
+      {evaluation && (
+        <DkCard>
+          <DkCardContent className="flex flex-col gap-3 py-5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-brand" />
+              <span className="font-display font-semibold text-ink">AI evaluation</span>
+              <DkBadge tone={riskTone[evaluation.risk_level]}>
+                {evaluation.risk_level} risk
+              </DkBadge>
+              <DkBadge tone="neutral">rec: {evaluation.recommendation}</DkBadge>
+            </div>
+            <p className="text-sm text-ink">{evaluation.summary}</p>
+            {evaluation.performance_outlook && (
+              <p className="text-sm text-[var(--dk-fg-2)]">
+                <span className="font-medium">Outlook:</span> {evaluation.performance_outlook}
+              </p>
+            )}
+            {evaluation.risk_flags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {evaluation.risk_flags.map((f) => (
+                  <DkBadge key={f} tone="warning">
+                    {f}
+                  </DkBadge>
+                ))}
+              </div>
+            )}
+          </DkCardContent>
+        </DkCard>
+      )}
 
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xl font-semibold text-ink">Purchase orders</h2>
