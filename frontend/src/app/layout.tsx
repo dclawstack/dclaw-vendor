@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 
+import { AppShell } from "@/components/app-shell";
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
@@ -33,7 +35,7 @@ export default function RootLayout({
         className="min-h-screen bg-background font-sans text-foreground"
         style={{ fontFamily: "var(--font-poppins), var(--dk-font-sans)" }}
       >
-        {children}
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
