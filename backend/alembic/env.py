@@ -21,6 +21,9 @@ if config.config_file_name is not None:
 # add your model's MetaData object here for 'autogenerate' support
 target_metadata = Base.metadata
 
+# Schema for the app domain tables (empty => public). On Neon this is "vendor".
+DB_SCHEMA = settings.db_schema or None
+
 
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
@@ -36,7 +39,15 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    if DB_SCHEMA:
+        connection.exec_driver_sql(f'CREATE SCHEMA IF NOT EXISTS "{DB_SCHEMA}"')
+        connection.exec_driver_sql(f'SET search_path TO "{DB_SCHEMA}", public')
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        version_table_schema=DB_SCHEMA,
+        include_schemas=bool(DB_SCHEMA),
+    )
 
     with context.begin_transaction():
         context.run_migrations()

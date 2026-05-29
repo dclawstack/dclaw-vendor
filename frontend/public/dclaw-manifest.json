@@ -1,0 +1,42 @@
+{
+  "app_id": "vendor",
+  "name": "DClaw Vendor",
+  "app_name": "DClaw Vendor",
+  "category": "Procurement",
+  "tagline": "AI-native vendor & purchase order management",
+  "description": "Supplier directory, purchase orders, onboarding, performance tracking, and an AI Vendor Copilot. Evaluate, onboard, and manage vendors end-to-end. Open-source. AI-first.",
+  "color": "#6366F1",
+  "icon": "package",
+  "version": "1.0.0",
+  "entrypoint": "http://localhost:3019",
+  "api_base": "http://localhost:8106/api/v1",
+  "permissions": [],
+  "requires_auth": false,
+  "billing_plan": "free",
+  "ports": {
+    "backend": 8106,
+    "frontend": 3019
+  },
+  "database": "dclaw_vendor",
+  "routes": {
+    "health": "/health/",
+    "api": "/api/v1",
+    "frontend": "/"
+  },
+  "nav": [
+    { "label": "Dashboard", "path": "/", "icon": "layout-dashboard" },
+    { "label": "Vendors", "path": "/vendors", "icon": "building-2" },
+    { "label": "Purchase Orders", "path": "/purchase-orders", "icon": "file-text" },
+    { "label": "AI Copilot", "path": "/copilot", "icon": "sparkles" }
+  ],
+  "features": [
+    "vendor-directory",
+    "purchase-orders",
+    "vendor-onboarding",
+    "performance-tracking",
+    "ai-copilot"
+  ],
+  "status": "active",
+  "maturity": "tier2",
+  "repo": "https://github.com/dclawstack/dclaw-vendor"
+}
