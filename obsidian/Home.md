@@ -25,9 +25,9 @@
 | **Tagline** | Vendor evaluation |
 | **Category** | Procurement |
 | **Brand color** | `#6366F1` |
-| **Progress** | 22/48 tasks — Phases 0–2 ✅ + landing live |
-| **Maturity** | 🟢 Tier 2 — Building (core domain + AI Copilot shipped) |
-| **Live** | Landing: https://dclaw-vendor.vercel.app |
+| **Progress** | **48/48 tasks ✅ — all 9 phases shipped (v1.0 GA, 2026-05-30)** |
+| **Maturity** | 🟢 Tier 3 — Complete (full platform; 117 backend tests green) |
+| **Live** | Landing: https://dclaw-vendor.vercel.app · App runs locally on :3060/:8146 |
 | **Stack** | Next.js 14 · FastAPI · SQLAlchemy 2.0 · Postgres 16 · Ollama/OpenRouter |
 | **GitHub** | [dclawstack/dclaw-vendor](https://github.com/dclawstack/dclaw-vendor) |
 
@@ -36,16 +36,21 @@
 ## Repository ground-truth
 
 ```
-backend/    FastAPI · SQLAlchemy 2.0 async · Pydantic v2 · ~24 py files · alembic present
-frontend/   Next.js 14 App Router · Tailwind · pre-built UI · ~15 tsx files
-docs/       getting-started · guides · reference · releases · troubleshooting
-helm/       Kubernetes Helm chart
+backend/    FastAPI · SQLAlchemy 2.0 async · Pydantic v2 · 16 routers · 8 migrations · 117 tests
+frontend/   Next.js 14 App Router · Tailwind · dk/ primitives · 9 pages + feature panels
+docs/       getting-started · guides · reference · releases · troubleshooting · demo
+helm/       Helm chart — CloudNativePG + TLS ingress + Prometheus annotations
+monitoring/ Prometheus notes + Grafana dashboard
+landing/    Standalone Next.js marketing site (live on Vercel)
 obsidian/   This vault
 .github/    CI workflows (incl. Claude Code Action)
 ```
 
-## Domain entities (PRODUCT-SPEC)
+## Domain entities
 
-`Vendor` (status, payment terms) · `PurchaseOrder` (status, total, delivery) · `POLineItem` (qty, unit price, received qty)
+**Core:** `Vendor` · `PurchaseOrder` · `POLineItem`
+**AI/feature models:** `OnboardingCase` / `OnboardingDocument` / `ApprovalStep` · `PerformanceScore` · `RiskAssessment` · `Contract` · `SustainabilityScore` · `Survey` / `SurveyResponse` · `Audit` / `AuditFinding` · `AppSetting`
+
+Vendors carry directory (category/industry/tier/website/enrichment) and diversity attributes; POs carry an ERP `external_ref`.
 
 Inspired by SAP Ariba, Coupa, Ivalua, Jaggaer — AI vendor management reduces risk and optimizes spend.
