@@ -28,7 +28,7 @@
 - **V1.7 — Frontend API client + types** · PR #54 · issue #12 — Typed `src/lib/api.ts`: domain types mirroring the Pydantic schemas + functions for all vendor/PO/line-item endpoints (`fetchJson`/`fetchVoid`, query-string helper).
 - **V1.8 — Frontend pages** · PR #54 · issue #13 — Five screens with `Dk*` primitives + Lucide icons (light-mode, pill CTAs): app shell with sidebar nav; Dashboard (stat cards, recent POs, vendors-by-status, quick actions); Vendors (table, search, status filter, Add modal); Vendor Detail (info card edit/delete, related POs, Add PO); Purchase Orders (vendor+status filters, Add PO with line-item editor); PO Detail (line-items table, inline receive tracking, status transitions, live total, delete). `next build` green; live API smoke confirmed.
 
-## Phase 2 — AI Vendor Copilot (in progress)
+## Phase 2 — AI Vendor Copilot (complete)
 
 ### 2026-05-29
 
@@ -39,6 +39,62 @@
 - **V2.6 — Copilot tests** · PR #61 · issue #19 — Mocked-LLM tests (schema-aware fake): chat reply+actions, retrieval-feeds-prompt assertion, vendor-focus context, empty-messages 422, chat 502, plus the V2.2 evaluate tests. Full backend suite **40 passed**.
 - **V2.2 — Vendor evaluation engine** · PR #60 · issue #15 — `services/vendor_evaluation.py`: builds a compact context from a vendor + its POs (status mix, total value, terms) and asks the LLM for a structured `VendorEvaluation` (risk_level, risk_flags, performance_outlook, summary, recommendation). `evaluate_batch` runs bounded-concurrency (semaphore) and captures per-vendor failures without aborting. New `app/api/v1/copilot.py` router with `get_llm` dependency: `POST /copilot/vendors/{id}/evaluate` (404/502 handling) and `POST /copilot/vendors/evaluate-batch?limit=`. 4 mocked tests (eval, 404, batch, failure capture). **Live-verified vs Ollama** — blacklisted vendor → risk_level=high, recommendation=avoid.
 - **V2.1 (service) — LLM service layer** · PR #59 · issue #14 — `services/llm.py`: async `LLMService` with Ollama (local primary, `/api/chat`) + OpenRouter (cloud fallback, `/chat/completions`) backends, config-driven selection (ollama / openrouter / **auto** = Ollama → OpenRouter fallback), and a `structured()` helper returning a validated Pydantic model via JSON mode (retries once on bad JSON, strips code fences). Added `POST /api/v1/settings/llm/test` (provider ping) + a "Test connection" button on the Settings page. 8 mocked tests (provider routing, auto fallback, structured parse/retry/fence, endpoint shape). **Live-verified against Ollama `llama3.2:3b`** — `structured()` returned a typed vendor-risk evaluation. **V2.1 complete.**
+
+## Phase 3 — Vendor Directory (complete)
+
+### 2026-05-30
+
+- **V3.1 — AI vendor classification** · PR #70 · issue #20 — `services/vendor_classification.py`: LLM structured output assigns spend category / industry / strategic tier (`VendorTier` enum). Single `POST /vendors/{id}/classify` + bulk `POST /vendors/classify-batch` (only-unclassified by default); persists onto the vendor. Explicit/bulk rather than auto-on-write to keep CRUD fast + provider-independent.
+- **V3.2 — Web data enrichment** · PR #70 · issue #21 — `services/vendor_enrichment.py`: derives a URL (website or corp email domain), fetches the homepage, LLM-extracts a structured profile (size/founded/HQ/industry/description); falls back to AI-inferred when no URL/fetch fails. Stores profile + provenance (`source`, `fetched_url`, `enriched_at`) in `Vendor.enrichment` JSONB. `POST /vendors/{id}/enrich`.
+- **V3.3 — Directory at scale** · PR #70 · issue #22 — Indexed `category`/`industry`/`tier` columns + repo filters; `GET /vendors/facets` aggregate counts (status/category/tier/industry). Migration `a3c1d9f2b7e4`.
+- **V3.4 — Directory UI** · PR #70 · issue #23 — Vendors page → directory: category facet chips, tier filter, tier + "enriched" badges, bulk **AI Classify**; vendor detail gets Classify/Enrich actions + classification + enriched-profile card. 8 new tests (48 total).
+
+## Phase 4 — Onboarding Workflow (complete)
+
+### 2026-05-30
+
+- **V4.1 — Onboarding data model** · PR #71 · issue #24 — `OnboardingCase` / `OnboardingDocument` / `ApprovalStep` (cascade-delete FKs) + migration `b7e2f4a8c1d9`.
+- **V4.2 — Document storage (MinIO)** · PR #71 · issue #25 — `services/storage.py` `StorageBackend` abstraction: `LocalStorage` (filesystem, default for dev/CI) + `MinioStorage` (S3-compatible, activates on `STORAGE_BACKEND=minio` + creds), presigned URLs. `python-multipart` + `minio` deps.
+- **V4.3 — AI checklist + doc validation** · PR #71 · issue #26 — `generate_checklist` tailors the required-document list to the vendor; `validate_document` checks an uploaded file against its expected type — both via LLM structured output.
+- **V4.4 — Approval routing** · PR #71 · issue #27 — ordered approval chain (default Compliance → Finance, or custom); `submit` → `pending_approval`; in-order step decisions; all-approved → `approved`; any reject → `rejected`; `activate` flips the vendor to `active`. Out-of-order decisions 409.
+- **V4.5 — Onboarding UI** · PR #72 · issue #28 — `/onboarding` list + create, and a `/onboarding/[id]` wizard: AI checklist, document upload (multipart) + AI validate, approval chain (submit → approve/reject in order → activate). Nav entry. 10 backend tests (58 total).
+
+## Phase 5 — Performance Tracking (complete)
+
+### 2026-05-30
+
+- **V5.1 — KPI / score model** · PR #73 · issue #29 — `PerformanceScore`: 10 KPI subscores (JSONB) across quality/delivery/cost/compliance + 4 dimension scores + overall composite (0–100), indexed by vendor/period/overall. Migration `c9d3e6b1f8a2`.
+- **V5.2 — AI scoring + trend analysis** · PR #73 · issue #30 — LLM assesses the 10 KPIs from profile + PO history; dimensions + overall computed deterministically in Python (equal weights). Trend = historical scores; benchmark = peer aggregate.
+- **V5.3 — Performance API** · PR #73 · issue #31 — `/performance/vendors/{id}/` `score` · `scores` · `latest` · `trend` · `benchmark` (vendor vs peer average + percentile within the same category).
+- **V5.4 — Performance UI** · PR #73 · issue #32 — `PerformancePanel` on vendor detail: Score (AI), dimension progress bars, benchmark line, overall-score trend chart. 8 backend tests (66 total).
+
+## Phase 6 — P1 Platform Features (complete)
+
+### 2026-05-30
+
+- **V6.1 — Risk Assessment** · PR #74 · issue #33 — `RiskAssessment` model; 20-type risk catalog; LLM scores applicable factors (severity) + overall level/score; continuous-monitoring **change alerts** by diffing the two latest assessments. `/risk` (types, assess, latest, history); RiskPanel on vendor detail.
+- **V6.2 — Contract Management** · PR #74 · issue #34 — `Contract` model; AI key-term extraction from pasted text; date-driven status (active → expiring within 60d → expired, preserving manual draft/terminated); `/contracts/renewals`. `/contracts` CRUD + extract; ContractsPanel. Migration `d4f8a2c6e1b9`.
+- **V6.3 — Spend Analytics** · PR #75 · issue #35 — `services/analytics.py`: deterministic spend aggregation (status/category/vendor/month, cancelled excluded) + AI insights targeting **~10% savings** + consolidation suggestions. `/analytics/spend` + `/analytics/spend/insights`.
+- **V6.4 — Procurement Integration** · PR #75 · issue #36 — `services/erp.py` `ErpConnector`: `MockErpConnector` (default) + `HttpErpConnector` (activates on `ERP_BACKEND=http` + creds); bidirectional sync (upsert by new `purchase_orders.external_ref`, link vendor by name), PO matching, invoice reconciliation (3-way-match-lite). `/integration` status/sync/reconciliation; `/analytics` page hosts spend + integration UI. Migration `e5a9c3d7b2f1`. 16 tests across the two PRs (88 total).
+
+## Phase 7 — P2 Vertical / Scale Features (complete)
+
+### 2026-05-30
+
+- **V7.1 — Diversity Tracking** · PR #76 · issue #37 — vendor diversity columns (`diverse_owned`, categories, `diversity_certified`, `certification_body`); `services/diversity.py` diverse-spend report by category; `/diversity/report`; DiversityPanel (edit) on vendor detail + diversity card on `/analytics`.
+- **V7.2 — Sustainability Scoring** · PR #76 · issue #38 — `SustainabilityScore` model; AI ESG scoring (environmental/social/governance + estimated carbon footprint + reduction targets); overall = mean(E,S,G). `/sustainability` score/latest/history; SustainabilityPanel. Migration `f6b1d4a9c2e8`.
+- **V7.3 — Survey & Feedback** · PR #77 · issue #39 — `Survey` / `SurveyResponse` models; AI sentiment per response (best-effort, non-blocking on LLM failure); vendor sentiment aggregation + monthly trend. `/surveys` CRUD + responses + `/vendors/{id}/sentiment`; `/feedback` page.
+- **V7.4 — Audit & Compliance** · PR #77 · issue #40 — `Audit` / `AuditFinding` models; finding tracking; **closure validation** (an audit can only close when all findings are closed). `/audits` CRUD + findings + close; `/audits` page. Migration `a1c5e9b3d7f2`. 17 tests across the two PRs (105 total).
+
+## Phase 8 — Platform Hardening & Release (complete)
+
+### 2026-05-30
+
+- **V8.1 — Auth (Logto)** · PR #78 · issue #41 — `core/auth.py`: Logto JWT validation via JWKS (RS256), feature-flagged by `AUTH_ENABLED` (default off → dev/CI open). `require_user` gates the `vendors` + `purchase-orders` routers; `current_user` non-enforcing variant. `/auth/config` (public bootstrap) + `/auth/me`. `pyjwt[crypto]` dep.
+- **V8.2 — Billing (Stripe)** · PR #78 · issue #42 — `services/billing.py` `BillingProvider`: `MockBilling` (default) + `StripeBilling` (httpx against the Stripe REST API, activates on `STRIPE_API_KEY`). Per-seat plans, subscription, checkout session. `/billing` plans/subscription/checkout; BillingPanel on Settings.
+- **V8.3 — Monitoring** · PR #79 · issue #43 — `core/observability.py`: structlog (JSON in prod, console in dev — no `print`), `PrometheusMiddleware` (request count + latency by method/templated-path/status), `/metrics`. `monitoring/` docs + Grafana dashboard JSON. `prometheus-client` + `structlog` deps.
+- **V8.4 — Helm / prod deploy** · PR #79 · issue #44 — chart fixed to `dclaw-vendor` (images + canonical ports 8146/3060); CloudNativePG `Cluster` template + deterministic creds secret; `DATABASE_URL`/`DB_SCHEMA` wired to the rw service; TLS ingress (cert-manager); Prometheus scrape annotations. `helm lint` + `helm template` clean.
+- **V8.5 — Docs & release** · PR #80 · issue #45 — filled `docs/` (quickstart with run instructions + LLM setup, complete API reference, module-by-module use-case tour), v1.0.0 changelog (root `CHANGELOG.md` + `docs/releases/changelog.md`), and `docs/demo.md` 5-minute demo script. Docs-only (CI skipped). **117 backend tests green; plan complete (48/48).**
 
 ## Phase 8 — Landing (built in parallel, ahead of the Phase-2 pause)
 
